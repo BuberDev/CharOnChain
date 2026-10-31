@@ -1,0 +1,41 @@
+# @charonchain/database
+
+Migracje Postgres/Supabase, runner i narzędzia (COC-004). Schemat docelowy: `docs/03-DATABASE-AND-API.md`.
+
+## Konwencje
+
+- Pliki `migrations/NNNN_nazwa.up.sql` + `NNNN_nazwa.down.sql`, numeracja ciągła od 0001. **Nie edytuj zastosowanej migracji** — runner wykrywa zmianę (suma kontrolna) i odmówi pracy; dodaj nową.
+- Pliki nie zawierają `BEGIN/COMMIT/ROLLBACK` (runner zarządza transakcją). Bloki `begin … end;` w funkcjach PL/pgSQL są dozwolone.
+- Wspólne typy w schemacie `app` (niewystawianym przez API): `app.evm_address` (adres małymi literami), `app.hash32`, `app.usdc_raw` (`NUMERIC(78,0)`, 0…uint256), `app.touch_updated_at()`.
+- Tabela runnera: `private.schema_migrations` (RLS włączone, deny-by-default).
+- Każda nowa tabela w `public`/`app`/`private` musi mieć włączone RLS — sprawdza to `findTablesWithoutRls` (używaj w testach).
+- Migracje nie odwołują się do ról Supabase (`anon`, `authenticated`, `service_role`). Polityki RLS powstają razem z tabelami (COC-023).
+
+## Użycie
+
+```bash
+pnpm --filter @charonchain/database run build
+```
+
+```bash
+APP_ENV=local DATABASE_URL=postgres://user:pass@localhost:5432/charonchain node packages/database/dist/cli.js up
+```
+
+Polecenia: `up`, `down [n]`, `status`, `seed`. Bezpieczeństwo celu (`src/target.ts`):
+
+| `APP_ENV` | Wymagania | `down` | `seed` |
+|---|---|---|---|
+| `local` (domyślne) | host lokalny | tak | tak |
+| `staging` | dowolny host | tak | tak |
+| `production` | `MIGRATE_CONFIRM_PRODUCTION=<host>`, host nielokalny | **nie** | **nie** |
+
+Hasła nigdy nie są wypisywane. Operacje na produkcji wymagają osobnej, jawnej zgody właściciela (`docs/05` §6).
+
+## Testy
+
+- `pnpm test` — jednostkowe (bez bazy): pliki migracji, bezpieczeństwo celu.
+- `pnpm test:db` — integracyjne na **prawdziwym Postgresie**; wymaga `TEST_DATABASE_URL` (rola z `CREATEDB`). Każdy plik tworzy i usuwa własną bazę. Brak zmiennej to błąd, nie pominięcie.
+
+## Czego tu nie ma
+
+Lokalny stos Supabase (`supabase start`) wymaga Dockera i konta/projektu Supabase — poza zakresem sesji COC-004; konfigurację `supabase/` i połączenie z projektem wykonuje właściciel lub osobne zadanie po decyzji. Seedy dla encji powstają razem z tabelami (COC-020..022).

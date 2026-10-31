@@ -35,6 +35,46 @@ jobs:
       - run: pnpm test
       - run: pnpm build
 
+  database:
+    name: Database (migracje, rollback, domeny; prawdziwy Postgres)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          # Jednorazowa baza w kontenerze CI — to nie jest sekret produkcyjny.
+          POSTGRES_PASSWORD: ci-only-throwaway
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      TEST_DATABASE_URL: postgres://postgres:ci-only-throwaway@localhost:5432/postgres
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm test:db
+      # Smoke skompilowanego CLI na bazie CI. UWAGA: job nie był uruchomiony lokalnie na GitHubie;
+      # te same kroki wykonano ręcznie na lokalnym Postgresie 16 (patrz IMPLEMENTATION_PROGRESS.md).
+      - run: pnpm --filter @charonchain/database run build
+      - run: node packages/database/dist/cli.js up
+        env:
+          APP_ENV: local
+          DATABASE_URL: postgres://postgres:ci-only-throwaway@localhost:5432/postgres
+      - run: node packages/database/dist/cli.js status
+        env:
+          APP_ENV: local
+          DATABASE_URL: postgres://postgres:ci-only-throwaway@localhost:5432/postgres
+
   contracts:
     name: Contracts (Foundry)
     runs-on: ubuntu-latest

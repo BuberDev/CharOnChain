@@ -14,6 +14,7 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit -p tsconfig.json && pnpm --filter \"./apps/*\" --filter \"./packages/*\" --filter \"!@charonchain/contracts\" run typecheck",
     "test": "vitest run",
+    "test:db": "vitest run --config vitest.db.config.ts",
     "build": "pnpm --filter \"./apps/*\" --filter \"./packages/*\" --filter \"!@charonchain/contracts\" run build",
     "check": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm test && pnpm build",
     "check:contracts": "pnpm --filter @charonchain/contracts run check"

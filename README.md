@@ -64,7 +64,7 @@ pnpm install
 pnpm check
 ```
 
-`pnpm check` uruchamia: format, lint, typecheck, testy (Vitest) i build. Kontrakty: `pnpm check:contracts` (wymaga Foundry). Skopiuj `.env.example` do `.env.local`; nie wpisuj kluczy prywatnych, a sekrety trzymaj poza repozytorium. Aplikacje w `apps/` to na razie placeholdery techniczne — nie przyjmują darowizn.
+`pnpm check` uruchamia: format, lint, typecheck, testy jednostkowe (Vitest) i build. Testy bazy na prawdziwym Postgresie: `pnpm test:db` (wymaga `TEST_DATABASE_URL`, patrz `packages/database/README.md`). Kontrakty: `pnpm check:contracts` (wymaga Foundry). Skopiuj `.env.example` do `.env.local`; nie wpisuj kluczy prywatnych, a sekrety trzymaj poza repozytorium. Aplikacje w `apps/` to na razie placeholdery techniczne — nie przyjmują darowizn.
 
 ## Referencje pierwotne
 

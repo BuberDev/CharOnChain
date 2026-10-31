@@ -35,3 +35,7 @@ test-results/
 
 # Generowane przez Next.js
 next-env.d.ts
+
+# Robocze pliki skilla Taste (nie commitować; dowody trafiają do design-evidence/)
+.taste-skill/
+.vitest/

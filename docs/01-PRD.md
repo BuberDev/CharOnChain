@@ -1,4 +1,6 @@
-# PRD — CharOnChain (MVP v1.0)
+# PRD — CharOnChain (MVP v1.2 — Account Abstraction P0)
+
+> **Zmiana v1.2 (2026-10-31, decyzja właściciela):** platforma ma być dostępna dla osób bez wiedzy o kryptowalutach. Account Abstraction, embedded wallets i sponsorowanie gasu są **P0**. Specyfikacja: `docs/11-ACCOUNT-ABSTRACTION.md`. Kontrakty (SC-1.0) bez zmian.
 
 **Właściciel produktu:** do ustalenia  
 **Status:** specyfikacja wdrożeniowa (nie wdrożenie)  
@@ -28,6 +30,7 @@ CharOnChain umożliwia darczyńcy znalezienie wiarygodnej kampanii, przekazanie 
 - 100% fundacji w pilotażu z beneficjentem Safe o zweryfikowanych właścicielach i progu podpisów >=2.
 - >=80% zamkniętych kampanii z opublikowanym raportem w 30 dni; brak raportu oznaczony publicznie.
 - Mierzyć: wallet connect -> rozpoczęcie płatności -> podpis -> transakcja on-chain -> potwierdzenie; cohort repeat donor 30/90 dni; wskaźnik reklamacji; raportowanie.
+- Lejek Beginner (v1.2): rejestracja -> utworzenie konta -> zasilenie USDC -> autoryzacja darowizny -> potwierdzenie; odsetek operacji odrzuconych przez politykę sponsorowania; koszt sponsorowanego gasu na darowiznę i na aktywnego użytkownika; odsetek udanych odzyskań konta. Wartości docelowe ustala właściciel po benchmarku (nie zgadujemy).
 
 ### Poza celami
 
@@ -62,13 +65,21 @@ Nie optymalizujemy pod wartość spekulacyjną NFT, nie oferujemy zwrotu z darow
 - Przed podpisaniem: kwota, sieć, odbiorca, 0% prowizji i orientacyjny gas. Informacja o braku automatycznych zwrotów.
 - Przed eventem potwierdzonym nie wyświetlaj wpłaty jako zakończonej; obsłuż odrzucenie, zmianę chain, brak gazu, blokadę tokenu, expiry, cap race, RPC offline.
 
+- **Dwa tryby** (szczegóły: `docs/11` §2). Opisany wyżej przepływ `connect → allowance → approve → donate` dotyczy trybu **Advanced**. W trybie **Beginner** darczyńca wybiera kwotę i autoryzuje jedną operację (batch `approve`+`donate` w koncie), bez widoku gasu, sieci i `approve`. Wymagania ujawnienia (AC-35) pozostają, wyrażone prostym językiem.
+
 ### C. Tożsamość darczyńcy i nagrody
 - SIWE bez konieczności podawania e-maila; tworzenie profilu po pierwszym podpisie.
 - Historia darowizn (z chaina), suma nominalnego USDC, XP, obecna liga, postęp do kolejnej.
-- Po >=1 USDC użytkownik może `claim()` darmowego w znaczeniu braku opłaty platformy SBT (musi opłacić gas; gas sponsoring poza MVP).
+- Po >=1 USDC użytkownik może `claim()` darmowego w znaczeniu braku opłaty platformy SBT. W trybie **Beginner** opłatę sieciową pokrywa platforma (sponsorowana, osobna operacja, z limitami — `docs/11` §6); w trybie **Advanced** gas płaci użytkownik, chyba że jego portfel korzysta ze sponsorowania.
 - SBT nigdy nie jest zbywalny; jeden token na portfel. Widok w aplikacji korzysta z chaina, niezależnie od cache NFT marketplace.
 - Opcja spalenia własnego SBT (bez zmiany zdarzeń darowizny), ponowne odebranie po decyzji użytkownika.
 - Ustawienie publiczny/niepubliczny profil; wyłączenie uczestnictwa w leaderboardzie.
+
+### C2. Dostępność dla osób bez wiedzy o krypto (P0, v1.2)
+- **Beginner (domyślny):** rejestracja przez Google, Apple, e-mail lub passkey; automatyczne utworzenie bezpiecznego portfela embedded i smart accounta; sponsorowanie opłat przez Paymaster **wyłącznie** dla operacji CharOnChain, z limitami, budżetem i ochroną przed nadużyciami; `approve`+`donate` jako jedna autoryzacja; odznaka SBT bez osobnej opłaty dla darczyńcy; odzyskiwanie konta, przejrzysta kontrola nad kluczami i eksport portfela (w zakresie, który zapewnia wybrany dostawca).
+- **Advanced:** MetaMask, Rabby, WalletConnect i inne portfele; standardowy przepływ lub AA tam, gdzie portfel to wspiera; pełna kontrola użytkownika.
+- **Niezmienne zasady:** darowizny nadal trafiają bezpośrednio do zatwierdzonego Safe; każda darowizna wymaga świadomej autoryzacji użytkownika; atrybucja darowizn, XP i NFT do adresu smart accounta; brak automatycznego przekazywania środków; brak własnego tokena.
+- **Zasilenie konta USDC:** w MVP ręcznie (adres/QR, wyłącznie natywne USDC w Arbitrum One). Regulowany on-ramp fiat: **tylko propozycja** (`docs/12`), bez implementacji.
 
 ### D. Organizacje i raporty
 - Organizacja składa wniosek z danymi identyfikacyjnymi i Safe; operator sprawdza je przed aktywacją.
@@ -103,6 +114,8 @@ Nie optymalizujemy pod wartość spekulacyjną NFT, nie oferujemy zwrotu z darow
 ## 7. User journeys
 
 **Darczyńca pierwszy raz:** katalog -> kampania -> wybór kwoty -> connect -> switch Arbitrum -> allowance -> `donate` -> status chain -> podsumowanie -> opcjonalne SIWE / `claim` NFT.
+
+**Darczyńca Beginner (bez wiedzy o krypto):** katalog -> kampania -> wybór kwoty -> rejestracja (Google/Apple/e-mail/passkey) -> „Twoje konto” utworzone automatycznie -> zasilenie USDC -> przegląd (kwota, odbiorca, opłata pokryta przez platformę) -> autoryzacja -> potwierdzenie -> XP/liga -> opcjonalne „Odbierz odznakę” (sponsorowane).
 
 **Powracający darczyńca:** profil -> sprawdzenie raportów poprzednich kampanii -> kolejna darowizna -> nowy XP/ranga bez potrzeby mintowania drugiego NFT.
 

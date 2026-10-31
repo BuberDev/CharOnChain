@@ -65,7 +65,7 @@ FOOTER: metodologia, legal, prywatność, status, kontakt
 2. **Skills:** zweryfikuj, odczytaj i zastosuj `frontend-design` oraz `design-taste-frontend`; zapisz ślad ich realnego użycia.
 3. **Art direction:** zaproponuj **trzy różne kierunki dla pierwszych publicznych ekranów**, zawierające paletę, typografię, kompozycję, styl zdjęć i powód, dla którego pasują do filantropii on-chain. Wskaż rekomendowany kierunek i zapisz w `docs/DESIGN-DECISIONS.md`.
 4. **Tokeny:** przygotuj nazwy/role dla kolorów, fontów, spacingu, radius, shadow, ikon, stanów. Zero surowych losowych kolorów rozrzuconych po komponentach.
-5. **Wireframes + preview:** zbuduj ocenialną wersję home, campaign detail i checkout (najpierw warianty na komponentach statycznych, z wyraźnym oznaczeniem demo). Nie rozpoczynaj implementacji wszystkich 18 ekranów zanim spójność tej trójki nie przejdzie review.
+5. **Wireframes + preview:** zbuduj ocenialną wersję home, campaign detail i checkout **oraz ekranów Beginner UX-19 (logowanie) i UX-22 (autoryzacja darowizny)** (najpierw warianty na komponentach statycznych, z wyraźnym oznaczeniem demo). Nie rozpoczynaj implementacji wszystkich 18 ekranów zanim spójność tej trójki nie przejdzie review.
 6. **Build:** implementuj w wybranym stacku, mobile-first, oddzielając dane i dostępność od dekoracji. Używaj rzeczywistych stanów aplikacji i nie wymyślaj metryk.
 7. **Browser inspection:** wykonaj realne zrzuty w przeglądarce (Playwright lub narzędzie skilla), przy 360, 390, 768, 1280 i 1440 px, dla PL i EN oraz light/dark *jeśli wspierane*.
 8. **Critique -> poprawki -> review:** co najmniej dwie iteracje oceny względem `09-VISUAL-QA-CHECKLIST.md` na głównych ekranach, z dowodami przed/po. Nie oceniaj wyłącznie na podstawie JSX i kodu CSS.
@@ -82,7 +82,7 @@ FOOTER: metodologia, legal, prywatność, status, kontakt
 
 ## 5. Reużywalne komponenty i kryteria
 
-W `packages/ui` stwórz wersjonowane komponenty z przykładami stanów: `SiteHeader`, `TrustStatus`, `CampaignCard`, `DonationPanel`, `USDCAmount`, `WalletStatus`, `TierBadge`, `XPProgress`, `ImpactTimeline`, `ReportVerificationStatus`, `TransactionStatus`, `SafeAddress`, `EmptyState`, `ErrorState`, `DataTable`, `PageShell`, `LoadingSkeleton`.
+W `packages/ui` stwórz wersjonowane komponenty z przykładami stanów: `SiteHeader`, `TrustStatus`, `CampaignCard`, `DonationPanel`, `USDCAmount`, `WalletStatus`, `TierBadge`, `XPProgress`, `ImpactTimeline`, `ReportVerificationStatus`, `TransactionStatus`, `SafeAddress`, `EmptyState`, `ErrorState`, `DataTable`, `PageShell`, `LoadingSkeleton`; **v1.2 (AA/Beginner):** `OnboardingFlow`, `FundAccountPanel`, `AuthorizeDonationSheet`, `RecoveryStatus`, `SponsoredFeeNotice`, `ModeSwitcher`, `OperationStatus` (stany i wymagania: `docs/11` §7, §10). Język Beginnera bez żargonu (gas/approve/sieć/seed) na ścieżce głównej.
 
 Każdy komponent: semantyka, aria, keyboard, loading/disabled/error/success, PL/EN, RWD, test jednostkowy lub interaction test i preview. Zero duplikatów flow donate w oddzielnych komponentach.
 

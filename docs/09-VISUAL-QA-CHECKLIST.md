@@ -8,6 +8,7 @@ To checklista dla Claude Code, code review i właściciela. **Testy automatyczne
 - User: UX-08 własny profil; UX-09 publiczny profil; UX-10 leaderboard.
 - Org: UX-11 apply; UX-12 portal; UX-13 kreator; UX-14 raporty.
 - Admin: UX-15 moderacja; UX-16 monitor blockchain.
+- AA / Beginner (v1.2): UX-19 logowanie; UX-20 „Twoje konto”; UX-21 zasil konto USDC; UX-22 autoryzacja darowizny; UX-23 odzyskiwanie; UX-24 tryb zaawansowany. Krytyczne w 360/390 px: UX-19, UX-21, UX-22; stany: sponsorowanie niedostępne, brak budżetu, operacja odrzucona, operacja zrewertowana, dostawca niedostępny.
 
 **Każdy ekran**: mobile/desktop, empty/loading/error/success/long-text oraz role-based permissions jeśli adekwatne. Krytyczne: checkout w 360/390 px, wallet errors, confirm dialog, niedostępna sieć/RPC.
 
@@ -52,6 +53,6 @@ To checklista dla Claude Code, code review i właściciela. **Testy automatyczne
 - **AC-40 / accessibility:** axe bez krytycznych/poważnych błędów w głównych flow; ręczny keyboard/focus, contrast, reduced-motion i test dotykowych elementów.
 - **AC-41 / authentic content:** brak nieoznaczonych danych demo, obrazów fikcyjnych beneficjentów i nieudokumentowanych „verified”; wymagane jawne placeholdery do czasu zatwierdzenia.
 - **AC-42 / polish review:** dwie rundy screenshot audit przed/po, jawny raport usterek i napraw na home, campaign, checkout, profile.
-- **AC-43 / trust-first checkout:** UX test potwierdza, że USDC, sieć, Safe, gas, approve/donate i brak automatycznych zwrotów są zrozumiałe dla testującego, bez znajomości Web3.
+- **AC-43 / trust-first checkout:** UX test potwierdza, że USDC, sieć, Safe, gas, approve/donate i brak automatycznych zwrotów są zrozumiałe dla testującego, bez znajomości Web3. *(v1.2: rozszerzone o AC-63 — test z ≥5 osobami bez wiedzy o krypto, ścieżka rejestracja → zasilenie → darowizna.)*
 
 **Warunek zamknięcia COC-047:** AC-36..43 PASS, dowody w repo, brak nierozwiązanych P0/P1 w krytycznych ścieżkach. Jeśli wynik jest niejednoznaczny, oznacz jako IN_REVIEW, a nie DONE.

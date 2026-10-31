@@ -194,3 +194,16 @@ ReportReviewed(uint64 indexed reportId, uint8 decision, bytes32 reasonHash)
 3. Audyt ABI, adresów, ról, eventów, gas, zero funkcji withdraw; weryfikacja kodu w explorerze.
 4. Manifest deploy: git commit SHA, chain ID, registry/router/SBT/impact, natywny token, administrator Safe, guardian, wersja kompilatora, hash źródeł.
 5. Po przeglądzie prawnym i zewnętrznym audycie: osobna zgoda na mainnet. Uruchomienie na testnecie NIE jest dowodem bezpieczeństwa.
+
+## 9. Zgodność z Account Abstraction (analiza v1.2 — **bez zmian SC-1.0**)
+
+Decyzja z 2026-10-31 (AA = P0) **nie zmienia** semantyki, interfejsów ani niezmienników INV-01..10. Uzasadnienie:
+
+- `donate` wykonuje `safeTransferFrom(msg.sender, beneficiary, amountRaw)`; konto ERC-4337 jest `msg.sender`, więc `DonationReceived.donor`, `totalDonatedRaw`, XP i `tokenId = uint160(wallet)` odnoszą się do **adresu konta**. §2 już dopuszcza, że donor może być kontraktem.
+- `claim()` używa `_mint` (§2 SBT) — wprost przewidziane dla portfeli kontraktowych.
+- Zbicie `approve + donate` realizuje konto (batch). Nie wprowadzamy `permit` (§7) ani `donateFor`/relayera; każda taka zmiana wymagałaby nowego modelu zagrożeń i audytu.
+- Sponsorowanie gasu odbywa się poza kontraktami (paymaster w EntryPoint); kontrakty nie znają paymastera ani bundlera i nie kredytują ich adresów.
+
+**Dodatkowe testy wymagane** (rozszerzają `docs/05` §2): `test_donate_FromERC4337Account_AttributesToAccount`, `test_donate_FromDelegatedEOA_AttributesToEOA` (jeśli ADR-010 włączy 7702), `test_claim_FromContractWallet_NoReceiverRequired`, `test_batchApproveDonate_LeavesZeroAllowance`, `test_donate_NeverCreditsPaymasterOrBundler`, fuzz kwot z kontami kontraktowymi, regresja INV-02/INV-04 przy donorze będącym kontraktem.
+
+**Uwaga operacyjna:** kontrakt konta dostawcy może zostać zablokowany/zmieniony poza naszą kontrolą (rotacja właściciela, upgrade implementacji konta). Wymagania wobec kont: audytowana implementacja z zatwierdzonej fabryki, brak mechanizmów podmiany implementacji bez zgody użytkownika (`docs/11` §6.1 pkt 2).

@@ -183,3 +183,14 @@ Brak stack trace, SQL, wewnętrznych kluczy i treści dokumentów w publicznym b
 - Backup Postgres z testem odtwarzania, oddzielne sekrety na środowiska, 2FA dla operacji admin; minimalny RPO 24h i RTO 8h jako wstępne cele do przeglądu.
 - Logi z `requestId`, metryki bez danych wrażliwych; monitor RPC/indexer/reorg, Safe role changes, application errors, kontrakt pause; alert on-call.
 - Nazwy tabel i endpointów nie są uzasadnieniem zbierania większej ilości danych — data minimization by design.
+
+## 9. Rozszerzenie AA (v1.2) — PROPOZYCJA
+
+Normatywny opis: `docs/11` §8–§9. Skrót, aby nie dublować treści:
+
+- **SIWE:** dodać ERC-6492 (konta niewdrożone) obok EIP-1271; weryfikacja 6492 wyłącznie z zatwierdzonymi fabrykami (`§5` pkt 3 zachowuje domenę/chain/nonce/atomowe zużycie).
+- **Nowe tabele (service role, RLS deny-by-default):** `wallet_accounts`, `user_operations`, `sponsorship_decisions` (append-only), `sponsorship_budgets`. Brak e-maila i identyfikatorów społecznościowych w naszej bazie.
+- **`donations`:** dodać `user_op_hash` (nullable). `unique(chain_event_id)` i klucz `(chain_id, tx_hash, log_index)` bez zmian — w transakcji bundlera może być wiele darowizn różnych użytkowników, każda z innym `log_index`.
+- **API:** `POST /api/v1/aa/paymaster` (ERC-7677), `GET /api/v1/aa/user-operations/:userOpHash`, `GET /api/v1/health/sponsorship` (admin). `POST /api/v1/donations` **nadal nie istnieje**.
+- **Indexer (`§6`):** śledzi także `UserOperationEvent`/`UserOperationRevertReason`; rekoncyliacja kosztu i depozytu paymastera; reorgi → `ORPHANED` jak dla `chain_events`.
+- **Zastrzeżenie (DOC-01, `docs/10` §5):** `donations.amount_raw >= 1000000` (§2) jest sprzeczne z wyjątkiem „końcówka celu” z `docs/02` §2 i AC-04. **Nie zmieniono** — propozycja poprawki (`amount_raw > 0`) czeka na decyzję właściciela (komponent finansowy).

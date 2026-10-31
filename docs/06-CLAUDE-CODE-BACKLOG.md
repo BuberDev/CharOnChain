@@ -78,7 +78,40 @@ Każde zadanie to odrębny PR (lub krótszy podział PR, jeśli istotnie duży).
 | COC-061 | P0-GATE | 052 | Analiza regulacyjna, KYB/AML, dokumenty i obowiązki UE/PL | podpisana opinia prawna / gotowe procesy |
 | COC-062 | P0-GATE | 060,061 | Go/no-go mainnet, Safe role verify, deploy i test ograniczony | wszystkie release gates, ręczna zgoda właściciela |
 
-**Kolejność krytycznej ścieżki:** 001 -> 003 -> 003A -> 040 -> 047 -> 050 (gałąź UI); 001 -> 010 -> 011 -> 012 -> 013 -> 015 -> 016 -> 030 -> 031 -> 041 -> 050 -> 051 -> 052 -> (060 + 061) -> 062. Zespół może równolegle robić E2 i E4 po ustaleniu interfejsów.
+### Epik E6 — Account Abstraction i embedded wallets (P0 od v1.2; spec: `docs/11`)
+
+| ID | P | Zależności | Zadanie i rezultat | Kryterium zakończenia |
+|---|---|---|---|---|
+| COC-070 | P0 | 001,002 | **ADR-007:** weryfikacja kryteriów M1–M9 na źródłach pierwotnych + spike Privy-modułowy vs thirdweb na Arbitrum Sepolia; interfejs `WalletProvider`; benchmark gazu/op | ADR zaakceptowany przez właściciela; tabela kosztów 1k/10k/100k MAU z danymi pierwotnymi. **Wymaga:** hostów dostawców (sieć) i kont testowych/kluczy API od właściciela |
+| COC-071 | P0 | 070,010 | `packages/wallet`: logowanie, signer, klient smart accounta (wagmi/viem), tryby Beginner/Advanced, capabilities ERC-5792, builder operacji z danych on-chain + guard „what you see is what you sign” | AC-44, AC-48, AC-53, AC-54, AC-61; wersje przypięte; sekrety tylko w env |
+| COC-072 | P0 | 012,013,071 | **Paymaster Policy Service (PDP):** dekoder `callData`, allowlista, symulacja, budżety, limity, kill switch, ledger `sponsorship_decisions`, endpoint ERC-7677; fail-closed | AC-49, AC-51, AC-52; korpus „złotych” operacji + fuzz dekodera; zero wyjątków poza allowlistą |
+| COC-073 | P0 | 024,071 | SIWE: EIP-1271 + **ERC-6492**, allowlista fabryk, limity `eth_call` (rozszerza COC-024) | AC-55, AC-26; testy kont wdrożonych i niewdrożonych |
+| COC-074 | P0 | 021,030,071 | Migracje `wallet_accounts`, `user_operations`, `sponsorship_*`; indexer śledzi `UserOperationEvent`/`RevertReason`; mapowanie `userOpHash`↔tx/log; rekoncyliacja kosztu i depozytu | AC-50, AC-56; replay 100×, reorg, restart w połowie batcha; RLS testy |
+| COC-075 | P0 | 003A,071,072 | **UI Beginner:** UX-19..23 (logowanie, „Twoje konto”, zasil konto, autoryzacja, odzyskiwanie) — **BLOCKED do instalacji Taste** | AC-36..43, AC-57, AC-58, AC-60, AC-62; dowody w `design-evidence/` |
+| COC-076 | P0 | 041,071,072,074 | Checkout dwutrybowy: maszyna stanów AA (`docs/11` §7), obsługa `OP_REVERTED`/`SPONSORSHIP_*`, strona `/donations/[id]` po `userOpHash`/`txHash`, UX-24 | AC-45..48, AC-51, AC-52, AC-56; Playwright 360px |
+| COC-077 | P0 | 013,071,072 | Sponsorowany `claim` jako osobna operacja + limit pętli `claim/burn` | AC-59; testy limitów |
+| COC-078 | P0 | 072..077,050 | **Suite E2E AA** (Sepolia + lokalny EntryPoint/bundler): wszystkie scenariusze obowiązkowe + chaos (awaria dostawcy, brak budżetu, porzucona operacja) | AC-44..63 PASS; raport z realnych uruchomień |
+| COC-079 | P1 (dok.) | 070 | Propozycja on-ramp (`docs/12`) — **bez implementacji**; implementacja wymaga ADR-111 i zgody właściciela | dokument zatwierdzony; brak kodu |
+| COC-063 | P0-GATE | 078,052 | Przegląd bezpieczeństwa PDP/integracji kont, due diligence dostawcy (audyty, SOC 2, DPA), opinia prawna o embedded wallets (ADR-110), budżety i zasilanie paymastera | wszystkie bramki AA z `docs/05` §6; ręczna zgoda właściciela |
+
+### Zmiany w istniejących zadaniach (v1.2)
+
+| Zadanie | Zmiana |
+|---|---|
+| COC-002 | manifest środowiska dodatkowo: wersja EntryPoint, fabryki/implementacje kont, adres paymastera, flagi trybów; walidacja odrzuca nieznane wartości (adresy po weryfikacji on-chain) |
+| COC-003 / 003A | **warunek wstępny: zgoda właściciela na instalację Taste** (do tego czasu BLOCKED); art direction i preview obejmują UX-19 i UX-22 (Beginner) obok home/campaign/checkout |
+| COC-010 / 015 | fixtures kont ERC-4337/7702 i testy z `docs/02` §9 |
+| COC-024 | zakres rozszerza COC-073 (ERC-6492) |
+| COC-030 / 031 | zakres rozszerza COC-074 (userOps) |
+| COC-041 | zakres rozszerza COC-076 (dwa tryby) |
+| COC-042 | claim sponsorowany — COC-077 |
+| COC-046 / 047 | PL/EN i Visual QA dla UX-19..24; AC-63 (test użyteczności z osobami bez wiedzy o krypto) |
+| COC-050 | smoke obejmuje ścieżkę Beginner |
+| COC-052 | runbook paymastera (dren, brak budżetu, awaria dostawcy), role Safe zasilającego depozyt |
+| COC-060 | zakres audytu zewnętrznego obejmuje PDP i integrację kont |
+| COC-062 | finansowanie paymastera na mainnet wymaga osobnej, wyraźnej zgody właściciela |
+
+**Kolejność krytycznej ścieżki:** 001 -> 003 -> 003A -> 040 -> 047 -> 050 (gałąź UI); 001 -> 010 -> 011 -> 012 -> 013 -> 015 -> 016 -> 030 -> 031 -> 041 -> 050 -> 051 -> 052 -> (060 + 061) -> 062; **gałąź AA (v1.2):** 001 -> 002 -> 070 -> 071 -> 072 -> 076 -> 078 -> 063 -> 062 (COC-073/074/077 równolegle po 071; COC-075 po odblokowaniu UI). Zespół może równolegle robić E2 i E4 po ustaleniu interfejsów.
 
 ## 2. Zasady estymacji i zależności
 
@@ -156,6 +189,19 @@ impact, reprodukcja (bez realnych funduszy), proponowana poprawka i test regresj
 Uruchom Foundry unit/fuzz/invariant, testy RLS, indexer reorg/replay i SIWE.
 Nie modyfikuj kodu, dopóki nie przedstawisz raportu audytu.
 Wyraźnie zaznacz, że to NIE zastępuje niezależnego audytu.
+```
+
+### Prompt E — zadania Account Abstraction (E6)
+
+```text
+Zrealizuj zadanie COC-07x z docs/06 (epik E6). Przed kodowaniem przeczytaj
+docs/11-ACCOUNT-ABSTRACTION.md (INV-AA-01..10, §6 polityka sponsorowania, AC-44..63),
+docs/adr/ADR-007, docs/02 §9 oraz docs/05 §1a.
+Zasady twarde: kontrakty SC-1.0 bez zmian; brak własnego bundlera, kluczy i kontraktów kont;
+paymaster fail-closed; każda darowizna wymaga świeżej autoryzacji użytkownika (zakaz kluczy
+sesyjnych i auto-podpisu); brak POST /donations; brak mainnetu i realnych środków.
+Zależności od dostawców oznacz jako niezweryfikowane, dopóki nie przeczytasz ich źródeł
+pierwotnych. Testy negatywne polityki są obowiązkowe. Raportuj wyniki rzeczywistych uruchomień.
 ```
 
 ## 4. Format raportowania postępów przez Claude Code

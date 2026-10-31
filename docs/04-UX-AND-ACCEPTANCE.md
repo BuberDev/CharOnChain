@@ -46,7 +46,7 @@ Dodatkowe terminal states: `USER_REJECTED`, `APPROVAL_FAILED`, `DONATION_REVERTE
 ### Copy — elementy wymagane
 
 - „Przekazujesz **{amount} USDC** do zweryfikowanego portfela organizacji **{name}**, adres **{shortAddress}**.”
-- „CharOnChain nie pobiera obowiązkowej prowizji. Sieć Arbitrum pobiera opłatę w ETH.”
+- „CharOnChain nie pobiera obowiązkowej prowizji. Sieć Arbitrum pobiera opłatę w ETH.” *(tryb Advanced; w trybie Beginner komunikat zależny od trybu wg `docs/11` §10 i AC-60 — nie wolno pokazywać Beginnerowi opłaty „ETH płaconej przez Ciebie”, bo byłaby nieprawdziwa)*
 - „Darowizna jest nieodwracalna po potwierdzeniu. Platforma nie obsługuje automatycznych zwrotów.”
 - „Wpłaty dokonane poza przyciskiem **Wesprzy** nie zostaną uwzględnione w odznakach.”
 - „Weryfikacja organizacji nie gwarantuje rezultatu pomocy; zweryfikowane raporty opisują zakres przeprowadzonej kontroli.”
@@ -112,7 +112,7 @@ Dodatkowe terminal states: `USER_REJECTED`, `APPROVAL_FAILED`, `DONATION_REVERTE
 
 **AC-10 — wrong token:** GIVEN użytkownik ma USDC.e, ale brak native USDC, THEN UI wyjaśnia różnicę, nie przyjmuje USDC.e jako natywnego USDC.
 
-**AC-11 — no gas:** GIVEN brak ETH na Arbitrum, WHEN wallet chce wysłać, THEN czytelny komunikat; brak fałszywego success.
+**AC-11 — no gas:** GIVEN brak ETH na Arbitrum, WHEN wallet chce wysłać, THEN czytelny komunikat; brak fałszywego success. *(v1.2: dotyczy trybu **Advanced**; w trybie Beginner brak ETH jest normą i gas jest sponsorowany — AC-45, AC-51, AC-52.)*
 
 **AC-12 — user reject:** GIVEN podpis odrzucony, THEN checkout wraca do bezpiecznego stanu, nie zapisuje donation.
 
@@ -152,7 +152,7 @@ Dodatkowe terminal states: `USER_REJECTED`, `APPROVAL_FAILED`, `DONATION_REVERTE
 
 **AC-28 — wallet identity:** GIVEN dwa niezależne portfele tej samej osoby, THEN XP i SBT nie sumują się automatycznie.
 
-**AC-29 — zero fees:** GIVEN skuteczny transfer 10 USDC, THEN beneficjent otrzymuje 10 USDC, a platforma 0 USDC, z wyjątkiem opłaty sieciowej w ETH płaconej przez darczyńcę.
+**AC-29 — zero fees:** GIVEN skuteczny transfer 10 USDC, THEN beneficjent otrzymuje 10 USDC, a platforma 0 USDC, z wyjątkiem opłaty sieciowej w ETH płaconej przez darczyńcę *(v1.2: w trybie Beginner opłatę sieciową pokrywa platforma z depozytu paymastera; darczyńca nie płaci ETH — AC-45; kwota dla beneficjenta i brak prowizji w USDC bez zmian)*.
 
 **AC-30 — role change:** GIVEN EOA dewelopera, WHEN próbuje admin action, THEN revert; zmiana uprawnień wymaga multisig Safe i ma log onchain.
 
@@ -171,3 +171,12 @@ Dodatkowe terminal states: `USER_REJECTED`, `APPROVAL_FAILED`, `DONATION_REVERTE
 ## 6. Dodatkowe kryteria wizualne
 
 **AC-36..43** są zdefiniowane w `docs/09-VISUAL-QA-CHECKLIST.md` i są wymagane przy zamykaniu zadań UI. Link do dokumentu jest częścią definicji zakończenia COC-003/003A/040–047.
+
+## 7. Rozszerzenie AA (v1.2)
+
+Normatywnie: `docs/11-ACCOUNT-ABSTRACTION.md`.
+
+- **Nowe ekrany:** UX-19 logowanie/rejestracja, UX-20 „Twoje konto”, UX-21 zasil konto USDC, UX-22 przegląd i autoryzacja darowizny, UX-23 bezpieczeństwo i odzyskiwanie, UX-24 tryb zaawansowany. Zmienione: UX-04 (dwa tryby), UX-05 (po `userOpHash` lub `txHash`), UX-08 (claim sponsorowany).
+- **Checkout (Beginner):** maszyna stanów `IDLE → PREPARING_OP → SPONSORSHIP_CHECK → REVIEW → AWAITING_AUTHORIZATION → OP_SUBMITTED → OP_INCLUDED → TX_CONFIRMED → SUCCESS` (+ stany końcowe w `docs/11` §7). `OP_INCLUDED` nie jest sukcesem; sukces po potwierdzonym `DonationReceived`. Ścieżka Advanced pozostaje zgodna z §3.
+- **Kryteria akceptacji:** **AC-44..AC-63** (`docs/11` §12) — rejestracja bez MetaMaska, sponsorowana darowizna bez ETH, całość do Safe, atrybucja do konta, istniejący portfel, ograniczony zakres sponsorowania, brak podwójnego księgowania, awarie dostawcy i brak budżetu bez utraty środków, jawna autoryzacja, guard „what you see is what you sign”, SIWE 1271/6492, odzyskiwanie, test użyteczności z osobami bez wiedzy o krypto.
+- **Zasada językowa Beginner:** bez słów „gas”, „approve”, „sieć”, „seed” na ścieżce głównej; szczegóły techniczne w „Szczegółach”. Wymóg AC-35 (odbiorca, kwota USDC, opłata, brak zwrotów) pozostaje i jest wyrażony prostym językiem (AC-43/AC-63).

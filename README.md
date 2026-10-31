@@ -1,4 +1,4 @@
-# CharOnChain — specyfikacja MVP (v1.1 — design quality update)
+# CharOnChain — specyfikacja MVP (v1.2 — Account Abstraction jako P0)
 
 **Status:** projekt do implementacji i przeglądu; **nie** jest audytem bezpieczeństwa ani opinią prawną.  
 **Data:** 2026-10-31  
@@ -16,8 +16,13 @@
 7. [`docs/06-CLAUDE-CODE-BACKLOG.md`](docs/06-CLAUDE-CODE-BACKLOG.md) — epiki, zadania, zależności, prompty.
 8. [`docs/08-DESIGN-SYSTEM-AND-SKILLS.md`](docs/08-DESIGN-SYSTEM-AND-SKILLS.md) — obowiązkowe skille Taste + Design, art direction, komponenty i proces UI.
 9. [`docs/09-VISUAL-QA-CHECKLIST.md`](docs/09-VISUAL-QA-CHECKLIST.md) — wizualne testy, screenshoty, AC-36..43 i blokady jakości.
-10. [`CLAUDE.md`](CLAUDE.md) — stałe instrukcje dla Claude Code.
-11. [`START-HERE-CLAUDE.md`](START-HERE-CLAUDE.md) — inicjalizacja oraz proces frontendowy.
+10. [`docs/10-AUDIT-REPORT-PHASE1.md`](docs/10-AUDIT-REPORT-PHASE1.md) — audyt specyfikacji, sprzeczności, mapa zależności, wpływ zmiany AA.
+11. [`docs/11-ACCOUNT-ABSTRACTION.md`](docs/11-ACCOUNT-ABSTRACTION.md) — **P0:** tryby Beginner/Advanced, embedded wallets, paymaster, INV-AA, AC-44..63.
+12. [`docs/adr/ADR-007-embedded-wallet-and-aa-provider.md`](docs/adr/ADR-007-embedded-wallet-and-aa-provider.md) — porównanie Privy/thirdweb (`PROPOSED`, wymaga weryfikacji i spike'u).
+13. [`docs/12-FIAT-ONRAMP-PROPOSAL.md`](docs/12-FIAT-ONRAMP-PROPOSAL.md) — regulowany on-ramp fiat (**wyłącznie propozycja, bez implementacji**).
+14. [`CLAUDE.md`](CLAUDE.md) — stałe instrukcje dla Claude Code.
+15. [`START-HERE-CLAUDE.md`](START-HERE-CLAUDE.md) — inicjalizacja oraz proces frontendowy.
+16. [`IMPLEMENTATION_PROGRESS.md`](IMPLEMENTATION_PROGRESS.md) — status zadań, wyniki testów, blokady, otwarte problemy.
 
 ## Jakość UI — wymaganie obowiązkowe
 
@@ -27,18 +32,21 @@
 
 - **Sieć:** Arbitrum Sepolia (testy, chain ID 421614), Arbitrum One (produkcja, 42161).
 - **Waluta darowizn:** wyłącznie **natywne USDC Circle** na danej sieci; na Arbitrum One `0xaf88d065e77c8cC2239327C5EDb3A432268e5831`; **nie** USDC.e. Testnet: adres tokenu podawany konfiguracyjnie po weryfikacji, zero wymyślonych stałych adresów.
-- **Przepływ:** w tej samej transakcji `transferFrom(darczyńca, Safe fundacji, kwota)`; kontrakt nie przechowuje darowizn; **0% obowiązkowej opłaty platformy**.
+- **Przepływ:** w tej samej transakcji `transferFrom(darczyńca, Safe fundacji, kwota)`; kontrakt nie przechowuje darowizn; **0% obowiązkowej opłaty platformy**. W trybie Beginner „darczyńcą” jest adres smart accounta (operacja ERC-4337); kontrakty bez zmian.
+- **Dostępność (P0, od v1.2):** dwa tryby — **Beginner** (domyślny: logowanie Google/Apple/e-mail/passkey, automatyczny portfel embedded, smart account, sponsorowanie gasu przez Paymaster, `approve`+`donate` jako jedna autoryzacja) i **Advanced** (MetaMask, Rabby, WalletConnect, pełna kontrola). Szczegóły, niezmienniki i polityka sponsorowania: `docs/11`. Dostawca: ADR-007 (`PROPOSED`).
 - **Kampanie:** wyłącznie zweryfikowane organizacje; limit kwotowy (`hard cap`), termin rozpoczęcia i zakończenia, odbiorca przypisany nieodwracalnie do kampanii.
 - **Reputacja:** 1 USDC nominalnie = 10 XP (liczone od sumy, z zaokrągleniem w dół); poziomy wyznaczane ze skumulowanych kwalifikujących się wpłat on-chain. 6 lig, próg Diamond 100 000 USDC.
 - **NFT:** opcjonalnie odbierany przez darczyńcę ERC-721 + ERC-5192 (Soulbound), jeden na portfel; brak tokena spekulacyjnego.
 - **Raporty wpływu:** dokumenty publiczne + on-chain kotwiczenie skrótu i zdarzenie zatwierdzenia; brak twierdzenia, że blockchain dowodzi dostarczenia pomocy w świecie fizycznym.
 - **Dane:** Supabase Postgres i Storage; IPFS wyłącznie do publicznych metadanych NFT / bezpiecznych publicznych materiałów.
-- **Logowanie:** SIWE ERC-4361 (również EIP-1271 dla portfeli kontraktowych), opcjonalny anonimowy podgląd.
+- **Logowanie:** SIWE ERC-4361 (również EIP-1271 oraz **ERC-6492** dla smart accountów jeszcze niewdrożonych), opcjonalny anonimowy podgląd.
 - **Zarządzanie:** multisig Safe 2-of-3 lub silniejszy dla ról administracyjnych; osobny guardian tylko do awaryjnego pauzowania.
 
 ## Zakres poza MVP
 
-USDT0, ETH, WBTC, natywny BTC, fiat, escrow, DAO, marketplace NFT, smart accounts/gas sponsoring, automatyczne zwroty, matching, wielołańcuchowość, masowe otwieranie zbiórek przez osoby prywatne.
+USDT0, ETH, WBTC, natywny BTC, fiat (w tym on-ramp — wyłącznie propozycja `docs/12`), escrow, DAO, marketplace NFT, automatyczne zwroty, matching, wielołańcuchowość, masowe otwieranie zbiórek przez osoby prywatne, klucze sesyjne/płatności cykliczne, własny bundler lub infrastruktura kluczy, łączenie portfeli i migracja reputacji.
+
+> **Zmiana v1.2:** „smart accounts/gas sponsoring” **opuściły** listę poza-MVP — są P0 (decyzja właściciela 2026-10-31).
 
 ## Twarde stop-gates
 

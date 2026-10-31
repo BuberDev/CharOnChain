@@ -21,6 +21,25 @@
 
 **Ryzyko rezydualne:** nawet sprawdzenie KYB i Safe nie gwarantuje, że organizacja użyje środków zgodnie z deklaracją. Smart kontrakt nie może kontrolować wydatków już wykonanych z Safe odbiorcy. Publiczne komunikaty nie mogą sugerować, że jest inaczej.
 
+## 1a. Threat model — Account Abstraction (v1.2)
+
+| ID | Ryzyko | Skutek | Kontrola | Weryfikacja |
+|---|---|---|---|---|
+| AA-1 | Drenaż depozytu paymastera (operacje spoza allowlisty, batch z dodatkowym wywołaniem, zagnieżdżenia, `delegatecall`) | utrata środków platformy | PDP: pełne dekodowanie `callData`, allowlista celów/funkcji/argumentów, `value==0`, domyślne odrzucenie (`docs/11` §6.1) | korpus „złotych” operacji + fuzz dekodera, AC-49 |
+| AA-2 | Grief/sybil: masowe nowe konta lub operacje przechodzące walidację, a rewertujące przy wykonaniu | wyczerpanie budżetu | symulacja przed podpisem, limity per konto/IP/urządzenie, budżet globalny, kill switch, anomalie | test obciążeniowy, AC-52 |
+| AA-3 | Złośliwa fabryka/`initCode` | wykonanie obcego kodu przy walidacji/weryfikacji 6492 | allowlista fabryk i implementacji, limity `eth_call` | test negatywny, AC-55/49 |
+| AA-4 | Ślepe podpisywanie (passkey podpisuje hash) | darowizna na inny cel/kwotę | builder z danych on-chain, guard dekodujący `callData`, ekran przeglądu | AC-54, test manipulacji stanem UI |
+| AA-5 | Nadużycie `approve` (nieskończone, obcy spender) | utrata środków użytkownika | tylko `approve(Router, X)`, `X == donate.amount`, allowance po operacji = 0 | AC-53 |
+| AA-6 | Klucze sesyjne/automatyczne podpisy dostawcy | darowizna bez świadomej zgody | wyłączone w konfiguracji dostawcy, test konfiguracji | AC-61 |
+| AA-7 | Przejęcie logowania społecznościowego/e-mail = przejęcie konta | utrata środków i reputacji użytkownika | passkey/wieloczynnikowe odzyskiwanie, brak SMS jako jedynego czynnika, komunikaty o bezpieczeństwie, krótkie sesje | AC-58, przegląd dostawcy (M8) |
+| AA-8 | Awaria/kompromitacja dostawcy (wallet/bundler/paymaster) | niedostępność lub kradzież | fail-closed (INV-AA-05), interfejs `WalletProvider`, plan wyjścia, due diligence (COC-063) | chaos testy, AC-51 |
+| AA-9 | Replay/duplikat operacji, reorg | podwójne księgowanie XP/kosztu | `userOpHash` unikalny, nonce konta, dedupe `(chain,tx,logIndex)`, XP z routera | AC-50 |
+| AA-10 | Tańsze farmienie XP (brak kosztu gazu) | wypaczona liga | limity dobowe, monitoring grafu przepływów dawca↔Safe, KYB, zawieszenia | scenariusze + playbook |
+| AA-11 | Zmiana adresu konta po odzyskaniu | utrata tożsamości/reputacji (pkt 8 `CLAUDE.md`) | INV-AA-10 jako bramka M4; odrzucenie modeli zmieniających adres | AC-58 |
+| AA-12 | Błędne komunikaty o opłatach | wprowadzenie w błąd | komunikaty zależne od trybu | AC-60 |
+
+**Ryzyko rezydualne AA:** zaufanie do dostawcy embedded wallet i infrastruktury bundlera/paymastera; atak na łańcuch dostaw SDK; zmiany cen/limitów dostawcy; status prawny embedded wallets (ADR-110). Mitygacje nie eliminują ryzyka — zakres audytu zewnętrznego musi obejmować PDP i integrację kont (COC-060/063).
+
 ## 2. Testy Foundry — minimalna taksonomia
 
 ### Registry
@@ -69,6 +88,8 @@
 
 **E2E (Playwright):** anonymous browse -> wallet connect -> approve -> donate -> confirmed -> donor profile -> claim -> reports; mobile 360px; wrong chain; no ETH; user rejects; cap race; network outage; profile opt-in/out; private abuse report; log admin approval.
 
+**E2E AA (v1.2, Playwright, Sepolia):** osoba bez MetaMaska zakłada konto i dostaje smart wallet; konto z USDC bez ETH wykonuje sponsorowaną darowiznę; darowizna trafia w całości do zweryfikowanego Safe; XP i NFT przypisane właściwemu kontu; użytkownik z istniejącym portfelem też może wpłacić; sponsorowanie nie pozwala na dowolne operacje; brak ponownego zaksięgowania i podwójnej reputacji; błędy dostawcy i brak budżetu paymastera bez utraty środków (AC-44..63).
+
 **Load:** katalog >1000 kampanii i eventów paginowanych, p95 <800ms przy zdefiniowanym obciążeniu; ochrony przed abuse dla auth i upload.
 
 ## 4. Testowe organizacje, środowiska, klucze
@@ -94,7 +115,8 @@
 - [ ] Podpisane warunki udziału z fundacjami, w tym dowody i terminy raportowania, zgody na dane publiczne.
 - [ ] Zewnętrzny audyt smart kontraktów z 0 unresolved Critical/High oraz formalnym potwierdzeniem wersji commit/deploy.
 - [ ] Threat model i dokumentacja uprawnień podpisane przez niezależnego reviewera; Safe >=2-of-3; EOA dewelopera nie ma ról admin.
-- [ ] Wszystkie AC-01..AC-35 pokryte testami lub ręcznie udokumentowaną procedurą, wszystkie P0 pass.
+- [ ] Wszystkie AC-01..AC-35 oraz **AC-44..AC-63** pokryte testami lub ręcznie udokumentowaną procedurą, wszystkie P0 pass.
+- [ ] **AA:** niezależny przegląd PDP i integracji kont (w zakresie audytu zewnętrznego); due diligence dostawcy (audyty, SOC 2, incydenty, DPA/RODO); opinia prawna o embedded wallets/sponsorowaniu (ADR-110); zatwierdzone budżety i limity; test kill switch i wyczerpania budżetu; Safe zasilający depozyt paymastera z rolami zweryfikowanymi; ćwiczenie incydentu (dren paymastera).
 - [ ] Invariant tests, Fuzz, SAST, migration tests, RLS regression, mobile E2E pass.
 - [ ] Zweryfikowany na block explorerze source code oraz kontrakty i adres **native USDC**; manifest release sprawdzony 2-person review.
 - [ ] Test awaryjnego pause i restart, role changes, indexer reorg/replay, monitoring i alerty.

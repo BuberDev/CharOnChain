@@ -70,9 +70,9 @@ describe("układ monorepo (COC-001)", () => {
 });
 
 describe("polityka zależności (CLAUDE.md pkt 4: przypięte wersje, bez latest)", () => {
-  const EXACT = /^\d+\.\d+\.\d+(-[0-9A-Za-z.-]+)?$/;
+  const EXACT = /^(\d+\.\d+\.\d+(-[0-9A-Za-z.-]+)?|workspace:\*)$/;
 
-  it("każda zależność ma dokładną wersję (bez ^, ~, *, latest)", () => {
+  it("każda zależność ma dokładną wersję lub workspace:* (bez ^, ~, *, latest)", () => {
     const offenders: string[] = [];
     for (const rel of WORKSPACES) {
       for (const [name, version] of dependencyEntries(parsePackage(rel))) {

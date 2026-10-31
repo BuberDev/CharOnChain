@@ -39,3 +39,9 @@ Hasła nigdy nie są wypisywane. Operacje na produkcji wymagają osobnej, jawnej
 ## Czego tu nie ma
 
 Lokalny stos Supabase (`supabase start`) wymaga Dockera i konta/projektu Supabase — poza zakresem sesji COC-004; konfigurację `supabase/` i połączenie z projektem wykonuje właściciel lub osobne zadanie po decyzji. Seedy dla encji powstają razem z tabelami (COC-020..022).
+
+## Tabele projekcji (COC-021, migracja 0002)
+
+`chain_events` (journal, unikalność `(chain_id, tx_hash, log_index)`, niemutowalna tożsamość, **brak DELETE** — reorg to `ORPHANED`), `chain_event_history` (append-only), `donations` (ADR-112: `amount_raw > 0`), `donor_stats` (cache; `xp`/`tier` wymuszone zgodnie z progami PRD — lustro `packages/shared`, zgodność sprawdza test), `indexer_cursors`. Wszystkie z RLS deny-by-default i odebranymi uprawnieniami rolom `anon`/`authenticated`; zapisuje wyłącznie zaufany indexer. FK `donations.campaign_id → campaigns` dochodzi po COC-020.
+
+Testy `*.db.test.ts` tworzą role `anon`/`authenticated`, jeśli ich brak (wymaga uprawnień do tworzenia ról; w CI rola `postgres`), a do `SET ROLE` wymagają członkostwa w tych rolach.

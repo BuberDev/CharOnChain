@@ -68,7 +68,7 @@ Constraints: `cap_raw > 0`, `end_at > start_at`, `onchain_campaign_id` unique pe
 
 `id uuid`, `chain_event_id uuid unique FK`, `chain_id int`, `campaign_id uuid`, `onchain_campaign_id bigint`, `donor_wallet_lower varchar(42)`, `beneficiary_lower varchar(42)`, `token_address_lower`, `amount_raw numeric(78,0)`, `block_time timestamptz`, `status enum(PENDING,CONFIRMED,ORPHANED)`, `created_at`.
 
-Constraints: `amount_raw >= 1000000`, token musi odpowiadać natywnemu USDC danego środowiska, event hash zgodny z kontraktem routera. `donations` i `donor_totals` są tylko do odczytu po stronie UI; **żadnych ręcznie pisanych rekordów „wpłata” przez web API**.
+Constraints: `amount_raw > 0` *(korekta ADR-112, decyzja właściciela 2026-10-31; wcześniej `>= 1000000` odrzucałoby legalną końcówkę celu — minimum 1 USDC z wyjątkiem końcówki egzekwuje kontrakt, `docs/02` §2)*, token musi odpowiadać natywnemu USDC danego środowiska, event hash zgodny z kontraktem routera. `donations` i `donor_totals` są tylko do odczytu po stronie UI; **żadnych ręcznie pisanych rekordów „wpłata” przez web API**.
 
 ### `donor_profiles`, `donor_stats`
 
@@ -193,4 +193,4 @@ Normatywny opis: `docs/11` §8–§9. Skrót, aby nie dublować treści:
 - **`donations`:** dodać `user_op_hash` (nullable). `unique(chain_event_id)` i klucz `(chain_id, tx_hash, log_index)` bez zmian — w transakcji bundlera może być wiele darowizn różnych użytkowników, każda z innym `log_index`.
 - **API:** `POST /api/v1/aa/paymaster` (ERC-7677), `GET /api/v1/aa/user-operations/:userOpHash`, `GET /api/v1/health/sponsorship` (admin). `POST /api/v1/donations` **nadal nie istnieje**.
 - **Indexer (`§6`):** śledzi także `UserOperationEvent`/`UserOperationRevertReason`; rekoncyliacja kosztu i depozytu paymastera; reorgi → `ORPHANED` jak dla `chain_events`.
-- **Zastrzeżenie (DOC-01, `docs/10` §5):** `donations.amount_raw >= 1000000` (§2) jest sprzeczne z wyjątkiem „końcówka celu” z `docs/02` §2 i AC-04. **Nie zmieniono** — propozycja poprawki (`amount_raw > 0`) czeka na decyzję właściciela (komponent finansowy).
+- **DOC-01 rozstrzygnięte (ADR-112, ACCEPTED 2026-10-31):** `donations.amount_raw > 0` (§2). Poprzednie `>= 1000000` było sprzeczne z wyjątkiem „końcówka celu” z `docs/02` §2 i AC-04.

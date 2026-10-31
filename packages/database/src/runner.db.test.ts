@@ -14,6 +14,7 @@ import { Client } from "pg";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 import { loadMigrations, type Migration } from "./migrations.js";
+import { catalogSnapshot } from "./testing/db.js";
 import {
   findTablesWithoutRls,
   getStatus,
@@ -43,28 +44,6 @@ async function connect(): Promise<Client> {
   await client.connect();
   clients.push(client);
   return client;
-}
-
-/** Zrzut obiektów katalogu w schematach aplikacji (bez schematu `private` należącego do runnera). */
-async function snapshot(client: Client): Promise<string[]> {
-  const result = await client.query<{ line: string }>(`
-    select 'schema:' || nspname as line from pg_namespace
-      where nspname not like 'pg\\_%' and nspname not in ('information_schema', 'public', 'private')
-    union all
-    select 'type:' || n.nspname || '.' || t.typname || ':' || t.typtype::text
-      from pg_type t join pg_namespace n on n.oid = t.typnamespace
-      where n.nspname not like 'pg\\_%' and n.nspname not in ('information_schema', 'public', 'private')
-        and t.typtype = 'd'
-    union all
-    select 'func:' || n.nspname || '.' || p.proname
-      from pg_proc p join pg_namespace n on n.oid = p.pronamespace
-      where n.nspname not like 'pg\\_%' and n.nspname not in ('information_schema', 'public', 'private')
-    union all
-    select 'constraint:' || n.nspname || '.' || t.typname || ':' || pg_get_constraintdef(c.oid)
-      from pg_constraint c join pg_type t on t.oid = c.contypid join pg_namespace n on n.oid = t.typnamespace
-      where n.nspname not like 'pg\\_%' and n.nspname not in ('information_schema', 'public', 'private')
-    order by 1`);
-  return result.rows.map((row) => row.line);
 }
 
 function migrationsDir(files: Record<string, string>): string {
@@ -139,22 +118,22 @@ describe("rollback — test z dokumentacji COC-004", () => {
     await client.connect();
     try {
       const migrations = loadMigrations(MIGRATIONS_DIR);
-      const empty = await snapshot(client);
+      const empty = await catalogSnapshot(client);
       expect(empty).toEqual([]);
 
       await migrateUp(client, migrations);
-      const afterUp = await snapshot(client);
+      const afterUp = await catalogSnapshot(client);
       expect(afterUp.length).toBeGreaterThan(0);
 
       const reverted = await migrateDown(client, migrations, migrations.length);
       expect(reverted).toEqual(migrations.map((m) => m.version).reverse());
-      expect(await snapshot(client)).toEqual(empty);
+      expect(await catalogSnapshot(client)).toEqual(empty);
       expect(
         (await client.query("select count(*)::int as n from private.schema_migrations")).rows[0],
       ).toEqual({ n: 0 });
 
       await migrateUp(client, migrations);
-      expect(await snapshot(client)).toEqual(afterUp);
+      expect(await catalogSnapshot(client)).toEqual(afterUp);
     } finally {
       await client.end();
       await admin.query(`drop database if exists ${name} with (force)`);

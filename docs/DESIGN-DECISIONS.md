@@ -1,6 +1,6 @@
 # CharOnChain — rejestr decyzji wizualnych
 
-**STATUS: PROPOZYCJA — OCZEKUJE NA WYBÓR WŁAŚCICIELA (COC-003, krok „3 kierunki” z `docs/08` §3).** Nie oznacza to zatwierdzenia logo, palety, krojów pisma ani zdjęć. Żaden kierunek nie został jeszcze zbudowany; **nie ma** screenshotów, inspekcji w przeglądarce ani preview — powstaną po Twoim wyborze (COC-003A).
+**STATUS: KIERUNEK B „KWIT” WYBRANY PRZEZ WŁAŚCICIELA (2026-10-31); tokeny i preview w toku (COC-003/003A).** Poniższe sekcje 0–5 to historia propozycji sprzed wyboru. Nie oznacza to zatwierdzenia logo, palety, krojów pisma ani zdjęć. Żaden kierunek nie został jeszcze zbudowany; **nie ma** screenshotów, inspekcji w przeglądarce ani preview — powstaną po Twoim wyborze (COC-003A).
 
 ## 0. Realne użycie skilli (stan 2026-10-31)
 
@@ -125,8 +125,8 @@ Zasady wspólne dla wszystkich kierunków: bez fikcyjnych KPI, darczyńców i �
 ## Zapis wyboru
 
 - Numer ADR i data: DD-001, 2026-10-31 (PROPOSED)
-- Wybrany kierunek: **TBD (wybór właściciela)**
-- Krótkie uzasadnienie względem celu zbiórek i potrzeby zaufania: TBD
+- Wybrany kierunek: **B — Kwit** (`page-is-the-object`), wybór właściciela z 2026-10-31
+- Krótkie uzasadnienie względem celu zbiórek i potrzeby zaufania: kwit z publicznie sprawdzalnym dowodem jest produktem CharOnChain; jedna metafora łączy katalog, checkout i odznakę; zrozumiały dla Beginnera (decyzja zgodna z rekomendacją, sekcja 5)
 - Tokeny palette/type/spacing/motion: kandydaci w sekcji 3; ostateczne po wyborze
 - Rzeczywiście uruchomione skille (źródło i wersja, nie przypuszczenie): sekcja 0
 - Linki do prawdziwych renderów i screenshotów: brak — jeszcze nie wykonano

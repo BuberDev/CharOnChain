@@ -31,7 +31,7 @@
 - **ADR-008 (PROPOSED):** polityka sponsorowania — allowlista, limity, budżety, `burn` w allowliście (`docs/11` §6); wartości liczbowe ustala właściciel.
 - **ADR-009 (PROPOSED):** tożsamość przy dwóch trybach i wielu metodach logowania — brak łączenia i migracji reputacji (`CLAUDE.md` pkt 8); wymaganie wobec dostawcy: łączenie metod logowania bez zmiany adresu.
 - **ADR-010 (PROPOSED):** EIP-7702 — poza MVP jako ścieżka domyślna; włączenie za flagą po potwierdzeniu aktywacji na Arbitrum One/Sepolia ze źródeł pierwotnych.
-- **ADR-112 (PROPOSED, DOC-01):** korekta ograniczenia `donations.amount_raw >= 1000000` → `> 0`, bo odrzuciłoby legalną końcówkę celu (`docs/10` §5).
+- **ADR-112 (ACCEPTED 2026-10-31 przez właściciela, DOC-01):** `donations.amount_raw > 0` zamiast `>= 1000000`, bo poprzednie odrzucałoby legalną końcówkę celu (`docs/10` §5). Minimum 1 USDC (z wyjątkiem końcówki) egzekwuje kontrakt.
 - **ADR-113 (PROPOSED, DOC-05):** opcjonalna kontrola on-chain beneficjenta (Safe, próg ≥2) w `createCampaign` — zmiana dotyka przepływu pieniędzy.
 
 ## Możliwe P1 — wymaga nowego PRD/ADR i threat modelu

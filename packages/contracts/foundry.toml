@@ -1,0 +1,10 @@
+# SZKIELET (COC-001). Wersja kompilatora, optymalizator i zależności (forge-std, OpenZeppelin 5.x)
+# zostaną przypięte w COC-010 po weryfikacji kompatybilności (docs/02 §1). Foundry nie był
+# dostępny w sesji COC-001, więc ta konfiguracja NIE została uruchomiona lokalnie.
+[profile.default]
+src = "src"
+test = "test"
+script = "script"
+out = "out"
+cache_path = "cache"
+libs = ["lib"]

@@ -1,0 +1,31 @@
+{
+  "name": "charonchain",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "CharOnChain — non-custodial platforma darowizn USDC (monorepo). Szczegóły: README.md",
+  "packageManager": "pnpm@10.28.0",
+  "engines": {
+    "node": ">=22.12.0 <23"
+  },
+  "scripts": {
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit -p tsconfig.json && pnpm --filter \"./apps/*\" --filter \"./packages/*\" --filter \"!@charonchain/contracts\" run typecheck",
+    "test": "vitest run",
+    "build": "pnpm --filter \"./apps/*\" --filter \"./packages/*\" --filter \"!@charonchain/contracts\" run build",
+    "check": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm test && pnpm build",
+    "check:contracts": "pnpm --filter @charonchain/contracts run check"
+  },
+  "devDependencies": {
+    "@eslint/js": "10.0.1",
+    "@types/node": "22.20.5",
+    "eslint": "10.14.0",
+    "eslint-config-next": "16.4.3",
+    "prettier": "3.9.10",
+    "typescript": "6.0.3",
+    "typescript-eslint": "8.72.1",
+    "vitest": "5.0.5"
+  }
+}

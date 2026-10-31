@@ -1,0 +1,13 @@
+# Dokumentacja i specyfikacja Solidity nie są formatowane automatycznie
+docs/
+contracts/
+**/*.md
+.github/
+
+# Artefakty i lockfile
+node_modules/
+.next/
+dist/
+coverage/
+pnpm-lock.yaml
+**/next-env.d.ts

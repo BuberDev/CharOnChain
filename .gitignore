@@ -32,3 +32,6 @@ supabase/.temp/
 # Playwright (artefakty dowodowe w design-evidence/ są commitowane)
 playwright-report/
 test-results/
+
+# Generowane przez Next.js
+next-env.d.ts

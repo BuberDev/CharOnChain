@@ -1,0 +1,10 @@
+{
+  "name": "@charonchain/contracts",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "build": "forge build",
+    "fmt:check": "forge fmt --check",
+    "check": "forge fmt --check && forge build"
+  }
+}

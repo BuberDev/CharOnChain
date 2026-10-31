@@ -52,6 +52,20 @@ USDT0, ETH, WBTC, natywny BTC, fiat (w tym on-ramp — wyłącznie propozycja `d
 
 **Nie wolno wdrażać realnych darowizn do mainnetu bez:** zewnętrznego przeglądu/audytu kontraktów, niezależnej oceny prawnej (w tym MiCA i lokalnych zasad zbiórek), polityk AML/sankcji, wdrożonej weryfikacji organizacji, ćwiczenia procedur awaryjnych oraz testu integracyjnego z realnym Safe i natywnym USDC.
 
+## Uruchomienie lokalne (COC-001)
+
+Wymagania: Node 22 (`.nvmrc`), pnpm 10 (`corepack enable`). Foundry jest potrzebne dopiero od COC-010.
+
+```bash
+pnpm install
+```
+
+```bash
+pnpm check
+```
+
+`pnpm check` uruchamia: format, lint, typecheck, testy (Vitest) i build. Kontrakty: `pnpm check:contracts` (wymaga Foundry). Skopiuj `.env.example` do `.env.local`; nie wpisuj kluczy prywatnych, a sekrety trzymaj poza repozytorium. Aplikacje w `apps/` to na razie placeholdery techniczne — nie przyjmują darowizn.
+
 ## Referencje pierwotne
 
 - [Arbitrum — chain IDs](https://docs.arbitrum.io/chain-info)

@@ -91,6 +91,7 @@ E6 (NOWY, P0): 001,002 ─► 070 ─► 071 ─► 072 ‖ 073 ‖ 074 ─► 0
 | DOC-11 | Niska | `07` | Brak referencji do ERC-4337, 7677, 6492, 5792, EIP-7702 | dodane do `docs/11` §14 jako **niezweryfikowane** |
 | DOC-12 | Niska | `06` COC-016 | Test „Safe 2-of-3 na Arbitrum Sepolia” zakłada dostępność infrastruktury Safe (UI/Transaction Service) na tej sieci — **niezweryfikowane** | sprawdzić przed COC-016; plan B: Safe kontraktowo bez UI |
 | DOC-13 | Niska | całość | Luki specyfikacji: rate limiting (mechanizm), CSRF, biblioteka i18n, stack obserwowalności, feature flags, macierz env/sekretów, treści prawne | doprecyzować w COC-001/004/024 |
+| DOC-14 | Niska | `06` COC-001 vs `README`, `02` §4, `START-HERE` | Układ monorepo wymaga `packages/contracts`, a wszystkie dokumenty wskazują `contracts/src/interfaces/ICharOnChain.sol` w korzeniu | **Rozstrzygnięte w COC-001 (odwracalne):** `contracts/` pozostaje katalogiem specyfikacji; implementacja w `packages/contracts`; w COC-010 kopia interfejsu + test CI na identyczność obu plików |
 
 **Nie znaleziono** niezgodności matematycznych w ligach (AC-16 zgodne z tabelą PRD; `xp = raw/100000`), ani rozbieżności w zdarzeniach/ABI między `02` a `ICharOnChain.sol`.
 

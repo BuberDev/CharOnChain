@@ -36,6 +36,7 @@ const WORKSPACES = [
   "packages/contracts/package.json",
   "packages/database/package.json",
   "packages/ui/package.json",
+  "packages/shared/package.json",
 ];
 
 function parsePackage(rel: string): PackageJson {
@@ -63,6 +64,7 @@ describe("układ monorepo (COC-001)", () => {
       "@charonchain/contracts",
       "@charonchain/database",
       "@charonchain/ui",
+      "@charonchain/shared",
     ]);
   });
 });

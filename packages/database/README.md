@@ -42,6 +42,12 @@ Lokalny stos Supabase (`supabase start`) wymaga Dockera i konta/projektu Supabas
 
 ## Tabele projekcji (COC-021, migracja 0002)
 
-`chain_events` (journal, unikalność `(chain_id, tx_hash, log_index)`, niemutowalna tożsamość, **brak DELETE** — reorg to `ORPHANED`), `chain_event_history` (append-only), `donations` (ADR-112: `amount_raw > 0`), `donor_stats` (cache; `xp`/`tier` wymuszone zgodnie z progami PRD — lustro `packages/shared`, zgodność sprawdza test), `indexer_cursors`. Wszystkie z RLS deny-by-default i odebranymi uprawnieniami rolom `anon`/`authenticated`; zapisuje wyłącznie zaufany indexer. FK `donations.campaign_id → campaigns` dochodzi po COC-020.
+`chain_events` (journal, unikalność `(chain_id, tx_hash, log_index)`, niemutowalna tożsamość, **brak DELETE** — reorg to `ORPHANED`), `chain_event_history` (append-only), `donations` (ADR-112: `amount_raw > 0`), `donor_stats` (cache; `xp`/`tier` wymuszone zgodnie z progami PRD — lustro `packages/shared`, zgodność sprawdza test), `indexer_cursors`. Wszystkie z RLS deny-by-default i odebranymi uprawnieniami rolom `anon`/`authenticated`; zapisuje wyłącznie zaufany indexer. FK `donations → campaigns` dodała migracja 0003.
+
+## Organizacje i kampanie (COC-020, migracja 0003)
+
+`organizations` (publiczne; `APPROVED` wymaga zweryfikowanego Safe, jeden Safe = jedna organizacja na sieci), `organization_private` (dane osób, kontakt, KYB, retencja — tylko backend), `organization_members` (jedno aktywne członkostwo portfela), `campaigns`, `campaign_revisions` (append-only), `campaign_reviews` (append-only, 4-eyes).
+
+Reguły egzekwowane w bazie (obrona w głąb; backend też je wymusza): dozwolone przejścia statusu kampanii; od `PUBLISHING` zamrożone są beneficjent, limit, okno, sieć i organizacja (INV-05, AC-03); `PUBLISHED` tylko po **potwierdzonym, kanonicznym** zdarzeniu `CampaignCreated` zgodnym z kampanią (AC-01; konwencja `chain_events.args`: klucze jak w ABI, liczby jako ciągi dziesiętne, adresy małymi literami); kampania niezatwierdzonej organizacji nie przechodzi do `APPROVED` (AC-02); autor kampanii ani aktywny członek organizacji nie zatwierdzają jej (4-eyes); kampanii nie usuwa się. `donations` ma złożony FK do `campaigns (id, chain_id, onchain_campaign_id)`. RLS włączone, bez polityk (COC-023).
 
 Testy `*.db.test.ts` tworzą role `anon`/`authenticated`, jeśli ich brak (wymaga uprawnień do tworzenia ról; w CI rola `postgres`), a do `SET ROLE` wymagają członkostwa w tych rolach.

@@ -10,6 +10,7 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { loadMigrations } from "./migrations.js";
 import { findTablesWithoutRls, migrateUp } from "./runner.js";
 import { createTempDatabase, ensureRole, type TempDatabase } from "./testing/db.js";
+import { createPublishedCampaign } from "./testing/fixtures.js";
 
 const MIGRATIONS_DIR = new URL("../migrations", import.meta.url).pathname;
 
@@ -94,13 +95,24 @@ async function insertEvent(overrides: EventOverrides = {}): Promise<string> {
   return result.rows[0]?.id ?? "";
 }
 
+/** Kampanie opublikowane (z prawdziwą ścieżką przez wyzwalacze) po jednej na sieć; on-chain ID = 1. */
+const campaignIdByChain = new Map<number, string>();
+
 async function insertDonation(eventId: string, amountRaw: string, chainId = 421614): Promise<void> {
   await client.query(
     `insert into public.donations
-       (chain_event_id, chain_id, onchain_campaign_id, donor_wallet_lower, beneficiary_lower,
+       (chain_event_id, campaign_id, chain_id, onchain_campaign_id, donor_wallet_lower, beneficiary_lower,
         token_address_lower, amount_raw, block_time, status)
-     values ($1, $2, 1, $3, $4, $5, $6::numeric, now(), 'PENDING')`,
-    [eventId, chainId, addr(0xd1), addr(0xe1), addr(0xc1), amountRaw],
+     values ($1, $2, $3, 1, $4, $5, $6, $7::numeric, now(), 'PENDING')`,
+    [
+      eventId,
+      campaignIdByChain.get(chainId),
+      chainId,
+      addr(0xd1),
+      addr(0xe1),
+      addr(0xc1),
+      amountRaw,
+    ],
   );
 }
 
@@ -112,6 +124,12 @@ beforeAll(async () => {
   await ensureRole(client, "anon");
   await ensureRole(client, "authenticated");
   await migrateUp(client, loadMigrations(MIGRATIONS_DIR));
+  // Obie sieci mają opublikowaną kampanię, żeby test niezgodności chain_id sprawdzał FK do zdarzenia,
+  // a nie przypadkową nieobecność kampanii.
+  for (const chainId of [421614, 42161]) {
+    const published = await createPublishedCampaign(client, { chainId, onchainCampaignId: 1 });
+    campaignIdByChain.set(chainId, published.id);
+  }
 });
 
 afterAll(async () => {

@@ -84,6 +84,8 @@ function serialize(value: unknown, path: string): string {
       });
       return `{${members.join(",")}}`;
     }
+    default:
+      throw new CanonicalJsonError(path, "nieznany typ wartości");
   }
 }
 

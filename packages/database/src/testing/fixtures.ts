@@ -60,7 +60,7 @@ export async function createDraftCampaign(
   const result = await client.query<{ id: string }>(
     `insert into public.campaigns
        (organization_id, chain_id, slug, title, cap_raw, start_at, end_at, beneficiary_lower, created_by_wallet_lower)
-     values ($1, $2, $3, 'Zbiórka testowa', $4::numeric, now() - interval '1 day', now() + interval '30 days', $5, $6)
+     values ($1, $2, $3, 'Zbiórka testowa', $4::numeric, date_trunc('second', now() - interval '1 day'), date_trunc('second', now() + interval '30 days'), $5, $6)
      returning id`,
     [
       organization.id,

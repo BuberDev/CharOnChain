@@ -914,14 +914,16 @@ describe("rollback migracji 0004", () => {
     try {
       await ensureRole(probe, "anon");
       await ensureRole(probe, "authenticated");
+      // Zakres tylko do 0004 (późniejsze migracje mają własne testy rollbacku).
+      const upToFourth = migrations.slice(0, 4);
       await migrateUp(probe, migrations.slice(0, 3));
       const afterThird = await catalogSnapshot(probe);
-      await migrateUp(probe, migrations);
+      await migrateUp(probe, upToFourth);
       const afterFourth = await catalogSnapshot(probe);
       expect(afterFourth).not.toEqual(afterThird);
-      await migrateDown(probe, migrations, 1);
+      await migrateDown(probe, upToFourth, 1);
       expect(await catalogSnapshot(probe)).toEqual(afterThird);
-      await migrateUp(probe, migrations);
+      await migrateUp(probe, upToFourth);
       expect(await catalogSnapshot(probe)).toEqual(afterFourth);
     } finally {
       await probe.end();

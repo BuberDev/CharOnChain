@@ -3,8 +3,16 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "build": "forge build",
-    "fmt:check": "forge fmt --check",
-    "check": "forge fmt --check && forge build"
-  }
+    "build": "hardhat build",
+    "test": "hardhat test solidity",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "check": "pnpm run typecheck && pnpm run build && pnpm run test"
+  },
+  "devDependencies": {
+    "@openzeppelin/contracts": "5.6.1",
+    "forge-std": "github:foundry-rs/forge-std#f3dae6e6ee381f25eb6a246f7da9b85c91a68219",
+    "hardhat": "3.21.2",
+    "solc": "0.8.28"
+  },
+  "type": "module"
 }

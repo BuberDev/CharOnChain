@@ -1,6 +1,8 @@
 # Dokumentacja i specyfikacja Solidity nie są formatowane automatycznie
 docs/
-contracts/
+/contracts/
+packages/contracts/artifacts/
+packages/contracts/cache/
 **/*.md
 .github/
 

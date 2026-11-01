@@ -13,6 +13,8 @@ export default tseslint.config(
       "contracts/**",
       "packages/contracts/lib/**",
       "packages/contracts/out/**",
+      "packages/contracts/artifacts/**",
+      "packages/contracts/cache/**",
     ],
   },
   js.configs.recommended,

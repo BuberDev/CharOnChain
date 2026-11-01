@@ -42,3 +42,5 @@ next-env.d.ts
 
 # Wyniki testów E2E (Playwright)
 apps/web/e2e/.results/
+packages/contracts/artifacts/
+packages/contracts/cache/

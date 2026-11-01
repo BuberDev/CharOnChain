@@ -99,17 +99,39 @@ jobs:
           DATABASE_URL: postgres://postgres:ci-only-throwaway@localhost:5432/postgres
 
   contracts:
-    name: Contracts (Foundry)
+    name: Contracts (Hardhat 3 / EDR — testy Foundry-style, fuzz, invariants)
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      # Kompilator: solc-js 0.8.28 z pakietu npm (przypięty), bez pobierania binariów.
+      - run: pnpm check:contracts
+
+  contracts-foundry:
+    name: Contracts (forge) — niezależna weryfikacja tych samych testów
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    # Konfiguracja forge nie była uruchomiona lokalnie (brak dostępu do foundry.paradigm.xyz w sesji deweloperskiej).
+    # Do czasu pierwszego zielonego przebiegu job NIE blokuje; po potwierdzeniu usunąć `continue-on-error`.
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
       - uses: foundry-rs/foundry-toolchain@v1
-      # Na etapie COC-001 nie ma jeszcze źródeł Solidity; testy, fuzz i invariants dochodzą w COC-010..015.
-      # UWAGA: ta konfiguracja nie została uruchomiona lokalnie (Foundry niedostępne w sesji COC-001).
       - run: forge --version
         working-directory: packages/contracts
-      - run: forge fmt --check
-        working-directory: packages/contracts
       - run: forge build
+        working-directory: packages/contracts
+      - run: forge test -vv
         working-directory: packages/contracts

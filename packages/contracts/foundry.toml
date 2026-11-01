@@ -1,10 +1,25 @@
-# SZKIELET (COC-001). Wersja kompilatora, optymalizator i zależności (forge-std, OpenZeppelin 5.x)
-# zostaną przypięte w COC-010 po weryfikacji kompatybilności (docs/02 §1). Foundry nie był
-# dostępny w sesji COC-001, więc ta konfiguracja NIE została uruchomiona lokalnie.
+# Konfiguracja Foundry dla uruchomień `forge` (CI, gdy dostępne). W środowisku bez dostępu do
+# foundry.paradigm.xyz testy są uruchamiane przez Hardhat 3 / EDR (`pnpm test`, hardhat.config.ts) —
+# te same pliki `*.t.sol`. TA KONFIGURACJA NIE ZOSTAŁA URUCHOMIONA LOKALNIE (brak Foundry w sesji).
 [profile.default]
 src = "src"
 test = "test"
 script = "script"
 out = "out"
 cache_path = "cache"
-libs = ["lib"]
+solc = "0.8.28"
+evm_version = "cancun"
+optimizer = true
+optimizer_runs = 200
+remappings = [
+  "@openzeppelin/contracts/=node_modules/@openzeppelin/contracts/",
+  "forge-std/=node_modules/forge-std/src/",
+]
+
+[fuzz]
+runs = 256
+
+[invariant]
+runs = 64
+depth = 64
+fail_on_revert = false

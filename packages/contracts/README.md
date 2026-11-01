@@ -21,6 +21,12 @@ Testy to zwykłe pliki `*.t.sol` z `forge-std` (v1.17.0, przypięty commit): uni
 
 W środowisku deweloperskim `foundry.paradigm.xyz` i `binaries.soliditylang.org` były zablokowane, więc `forge` nie dało się uruchomić. Te same pliki `*.t.sol` uruchamia Hardhat 3 (silnik EDR implementuje cheatcody Foundry) z kompilatorem `solc-js` 0.8.28 z npm (ten sam kompilator i ustawienia → ten sam bajtkod). `foundry.toml` jest utrzymywany dla `forge` w CI (`contracts-foundry`, na razie `continue-on-error`): **nie był uruchomiony lokalnie**. Różnice między runnerami (np. niedostępne cheatcody) wyjdą dopiero w CI.
 
+## Wdrożenie (COC-016)
+
+`deploy/deploy.ts` (biblioteka viem) wdraża cztery kontrakty, nadaje role operacyjne, a na końcu planuje `beginDefaultAdminTransfer(adminSafe)` w każdym kontrakcie; Safe musi osobno wywołać `acceptDefaultAdminTransfer()` po upływie opóźnienia (do tego czasu manifest ma status `ADMIN_TRANSFER_PENDING`). Wdrażający nie zachowuje żadnej roli; stan jest weryfikowany odczytem z łańcucha (`verifyDeployment`). Testy: `pnpm test:deploy` (łańcuch w procesie, wymaga `build`).
+
+CLI Sepolia (`deploy/cli.ts`) obsługuje wyłącznie Arbitrum Sepolia, klucz tylko z `DEPLOYER_PRIVATE_KEY`, domyślnie drukuje plan bez transakcji (`--execute` wysyła). Nie był uruchomiony na żadnej sieci publicznej.
+
 ## Ryzyka i niezweryfikowane założenia
 
 1. **EVM `cancun`** (wymagany przez OZ 5.6.1; kompilator emituje MCOPY i PUSH0). Obsługa na Arbitrum One/Sepolia **nie została zweryfikowana** (brak dostępu do dokumentacji Arbitrum). Pierwszy test wdrożenia na Sepolia (COC-016) musi to potwierdzić, zanim cokolwiek innego zostanie uznane za gotowe.

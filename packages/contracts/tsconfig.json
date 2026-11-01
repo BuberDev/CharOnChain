@@ -1,5 +1,9 @@
 {
   "extends": "../../tsconfig.base.json",
-  "compilerOptions": { "noEmit": true, "types": ["node"], "lib": ["ES2023"] },
-  "include": ["hardhat.config.ts", "script/**/*.ts"]
+  "compilerOptions": {
+    "noEmit": true,
+    "types": ["node"],
+    "lib": ["ES2023"]
+  },
+  "include": ["hardhat.config.ts", "script/**/*.ts", "deploy/**/*.ts"]
 }

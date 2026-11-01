@@ -16,10 +16,11 @@
     "test": "vitest run",
     "test:db": "vitest run --config vitest.db.config.ts",
     "build": "pnpm --filter \"./apps/*\" --filter \"./packages/*\" run build",
-    "check": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm test && pnpm test:contracts && pnpm build",
+    "check": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm test && pnpm test:contracts && pnpm test:deploy && pnpm build",
     "check:contracts": "pnpm --filter @charonchain/contracts run check",
     "test:e2e": "pnpm --filter @charonchain/web run test:e2e",
-    "test:contracts": "pnpm --filter @charonchain/contracts run test"
+    "test:contracts": "pnpm --filter @charonchain/contracts run test",
+    "test:deploy": "pnpm --filter @charonchain/contracts run test:deploy"
   },
   "devDependencies": {
     "@axe-core/playwright": "4.14.0",

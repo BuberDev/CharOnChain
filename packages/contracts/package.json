@@ -6,13 +6,22 @@
     "build": "hardhat build",
     "test": "hardhat test solidity",
     "typecheck": "tsc --noEmit -p tsconfig.json",
-    "check": "pnpm run typecheck && pnpm run build && pnpm run test"
+    "check": "pnpm run typecheck && pnpm run build && pnpm run test && pnpm run test:deploy",
+    "test:deploy": "vitest run --config vitest.deploy.config.ts --root ../..",
+    "deploy:sepolia": "tsx deploy/cli.ts"
   },
   "devDependencies": {
     "@openzeppelin/contracts": "5.6.1",
+    "@types/node": "22.20.5",
     "forge-std": "github:foundry-rs/forge-std#f3dae6e6ee381f25eb6a246f7da9b85c91a68219",
     "hardhat": "3.21.2",
-    "solc": "0.8.28"
+    "solc": "0.8.28",
+    "tsx": "4.23.15",
+    "typescript": "6.0.3"
   },
-  "type": "module"
+  "type": "module",
+  "dependencies": {
+    "@charonchain/shared": "workspace:*",
+    "viem": "2.57.13"
+  }
 }

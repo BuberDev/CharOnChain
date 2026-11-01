@@ -1,3 +1,4 @@
+export * from "./canonical-json";
 export * from "./manifest";
 export * from "./networks";
 export * from "./tiers";

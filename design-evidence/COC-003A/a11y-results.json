@@ -1,0 +1,595 @@
+{
+  "tags": [
+    "wcag2a",
+    "wcag2aa",
+    "wcag21a",
+    "wcag21aa",
+    "wcag22aa"
+  ],
+  "base": "http://localhost:3100",
+  "generatedAt": "2026-11-01T08:25:14.995Z",
+  "failures": 0,
+  "results": [
+    {
+      "name": "home-pl",
+      "width": 390,
+      "mode": "default",
+      "violations": [],
+      "extra": []
+    },
+    {
+      "name": "home-en",
+      "width": 390,
+      "mode": "default",
+      "violations": [],
+      "extra": []
+    },
+    {
+      "name": "campaign-pl",
+      "width": 390,
+      "mode": "default",
+      "violations": [],
+      "extra": []
+    },
+    {
+      "name": "campaign-en",
+      "width": 390,
+      "mode": "default",
+      "violations": [],
+      "extra": []
+    },
+    {
+      "name": "campaign-edge-pl",
+      "width": 390,
+      "mode": "default",
+      "violations": [],
+      "extra": []
+    },
+    {
+      "name": "campaign-empty-pl",
+      "width": 390,
+      "mode": "default",
+      "violations": [],
+      "extra": []
+    },
+    {
+      "name": "checkout-review-pl",
+      "width": 390,
+      "mode": "default",
+      "violations": [],
+      "extra": []
+    },
+    {
+      "name": "checkout-review-en",
+      "width": 390,
+      "mode": "default",
+      "violations": [],
+      "extra": []
+    },
+    {
+      "name": "checkout-authorizing-pl",
+      "width": 390,
+      "mode": "default",
+      "violations": [],
+      "extra": []
+    },
+    {
+      "name": "checkout-submitted-pl",
+      "width": 390,
+      "mode": "default",
+      "violations": [],
+      "extra": []
+    },
+    {
+      "name": "checkout-confirmed-pl",
+      "width": 390,
+      "mode": "default",
+      "violations": [],
+      "extra": []
+    },
+    {
+      "name": "checkout-rejected-pl",
+      "width": 390,
+      "mode": "default",
+      "violations": [],
+      "extra": []
+    },
+    {
+      "name": "checkout-sponsorship-pl",
+      "width": 390,
+      "mode": "default",
+      "violations": [],
+      "extra": []
+    },
+    {
+      "name": "checkout-reverted-pl",
+      "width": 390,
+      "mode": "default",
+      "violations": [],
+      "extra": []
+    },
+    {
+      "name": "checkout-invalid-pl",
+      "width": 390,
+      "mode": "default",
+      "violations": [],
+      "extra": []
+    },
+    {
+      "name": "profile-pl",
+      "width": 390,
+      "mode": "default",
+      "violations": [],
+      "extra": []
+    },
+    {
+      "name": "profile-en",
+      "width": 390,
+      "mode": "default",
+      "violations": [],
+      "extra": []
+    },
+    {
+      "name": "home-pl-menu-open",
+      "width": 390,
+      "mode": "state",
+      "violations": [],
+      "extra": []
+    },
+    {
+      "name": "campaign-pl-amount-error",
+      "width": 390,
+      "mode": "state",
+      "violations": [],
+      "extra": []
+    },
+    {
+      "name": "campaign-pl-amount-decimals",
+      "width": 390,
+      "mode": "state",
+      "violations": [],
+      "extra": []
+    },
+    {
+      "name": "checkout-review-pl-details-open",
+      "width": 390,
+      "mode": "state",
+      "violations": [],
+      "extra": []
+    },
+    {
+      "name": "home-pl",
+      "width": 390,
+      "mode": "reduced-motion",
+      "violations": [],
+      "extra": []
+    },
+    {
+      "name": "campaign-pl",
+      "width": 390,
+      "mode": "reduced-motion",
+      "violations": [],
+      "extra": []
+    },
+    {
+      "name": "checkout-review-pl",
+      "width": 390,
+      "mode": "reduced-motion",
+      "violations": [],
+      "extra": []
+    },
+    {
+      "name": "profile-pl",
+      "width": 390,
+      "mode": "reduced-motion",
+      "violations": [],
+      "extra": []
+    },
+    {
+      "name": "home-pl",
+      "width": 1440,
+      "mode": "default",
+      "violations": [],
+      "extra": []
+    },
+    {
+      "name": "home-en",
+      "width": 1440,
+      "mode": "default",
+      "violations": [],
+      "extra": []
+    },
+    {
+      "name": "campaign-pl",
+      "width": 1440,
+      "mode": "default",
+      "violations": [],
+      "extra": []
+    },
+    {
+      "name": "campaign-en",
+      "width": 1440,
+      "mode": "default",
+      "violations": [],
+      "extra": []
+    },
+    {
+      "name": "campaign-edge-pl",
+      "width": 1440,
+      "mode": "default",
+      "violations": [],
+      "extra": []
+    },
+    {
+      "name": "campaign-empty-pl",
+      "width": 1440,
+      "mode": "default",
+      "violations": [],
+      "extra": []
+    },
+    {
+      "name": "checkout-review-pl",
+      "width": 1440,
+      "mode": "default",
+      "violations": [],
+      "extra": []
+    },
+    {
+      "name": "checkout-review-en",
+      "width": 1440,
+      "mode": "default",
+      "violations": [],
+      "extra": []
+    },
+    {
+      "name": "checkout-authorizing-pl",
+      "width": 1440,
+      "mode": "default",
+      "violations": [],
+      "extra": []
+    },
+    {
+      "name": "checkout-submitted-pl",
+      "width": 1440,
+      "mode": "default",
+      "violations": [],
+      "extra": []
+    },
+    {
+      "name": "checkout-confirmed-pl",
+      "width": 1440,
+      "mode": "default",
+      "violations": [],
+      "extra": []
+    },
+    {
+      "name": "checkout-rejected-pl",
+      "width": 1440,
+      "mode": "default",
+      "violations": [],
+      "extra": []
+    },
+    {
+      "name": "checkout-sponsorship-pl",
+      "width": 1440,
+      "mode": "default",
+      "violations": [],
+      "extra": []
+    },
+    {
+      "name": "checkout-reverted-pl",
+      "width": 1440,
+      "mode": "default",
+      "violations": [],
+      "extra": []
+    },
+    {
+      "name": "checkout-invalid-pl",
+      "width": 1440,
+      "mode": "default",
+      "violations": [],
+      "extra": []
+    },
+    {
+      "name": "profile-pl",
+      "width": 1440,
+      "mode": "default",
+      "violations": [],
+      "extra": []
+    },
+    {
+      "name": "profile-en",
+      "width": 1440,
+      "mode": "default",
+      "violations": [],
+      "extra": []
+    },
+    {
+      "name": "campaign-pl-amount-error",
+      "width": 1440,
+      "mode": "state",
+      "violations": [],
+      "extra": []
+    },
+    {
+      "name": "campaign-pl-amount-decimals",
+      "width": 1440,
+      "mode": "state",
+      "violations": [],
+      "extra": []
+    },
+    {
+      "name": "checkout-review-pl-details-open",
+      "width": 1440,
+      "mode": "state",
+      "violations": [],
+      "extra": []
+    },
+    {
+      "name": "home-pl",
+      "width": 1440,
+      "mode": "reduced-motion",
+      "violations": [],
+      "extra": []
+    },
+    {
+      "name": "campaign-pl",
+      "width": 1440,
+      "mode": "reduced-motion",
+      "violations": [],
+      "extra": []
+    },
+    {
+      "name": "checkout-review-pl",
+      "width": 1440,
+      "mode": "reduced-motion",
+      "violations": [],
+      "extra": []
+    },
+    {
+      "name": "profile-pl",
+      "width": 1440,
+      "mode": "reduced-motion",
+      "violations": [],
+      "extra": []
+    },
+    {
+      "name": "home-pl",
+      "width": 320,
+      "mode": "reflow",
+      "violations": [],
+      "extra": []
+    },
+    {
+      "name": "home-pl",
+      "width": 320,
+      "mode": "text-spacing",
+      "violations": [],
+      "extra": []
+    },
+    {
+      "name": "home-en",
+      "width": 320,
+      "mode": "reflow",
+      "violations": [],
+      "extra": []
+    },
+    {
+      "name": "home-en",
+      "width": 320,
+      "mode": "text-spacing",
+      "violations": [],
+      "extra": []
+    },
+    {
+      "name": "campaign-pl",
+      "width": 320,
+      "mode": "reflow",
+      "violations": [],
+      "extra": []
+    },
+    {
+      "name": "campaign-pl",
+      "width": 320,
+      "mode": "text-spacing",
+      "violations": [],
+      "extra": []
+    },
+    {
+      "name": "campaign-en",
+      "width": 320,
+      "mode": "reflow",
+      "violations": [],
+      "extra": []
+    },
+    {
+      "name": "campaign-en",
+      "width": 320,
+      "mode": "text-spacing",
+      "violations": [],
+      "extra": []
+    },
+    {
+      "name": "campaign-edge-pl",
+      "width": 320,
+      "mode": "reflow",
+      "violations": [],
+      "extra": []
+    },
+    {
+      "name": "campaign-edge-pl",
+      "width": 320,
+      "mode": "text-spacing",
+      "violations": [],
+      "extra": []
+    },
+    {
+      "name": "campaign-empty-pl",
+      "width": 320,
+      "mode": "reflow",
+      "violations": [],
+      "extra": []
+    },
+    {
+      "name": "campaign-empty-pl",
+      "width": 320,
+      "mode": "text-spacing",
+      "violations": [],
+      "extra": []
+    },
+    {
+      "name": "checkout-review-pl",
+      "width": 320,
+      "mode": "reflow",
+      "violations": [],
+      "extra": []
+    },
+    {
+      "name": "checkout-review-pl",
+      "width": 320,
+      "mode": "text-spacing",
+      "violations": [],
+      "extra": []
+    },
+    {
+      "name": "checkout-review-en",
+      "width": 320,
+      "mode": "reflow",
+      "violations": [],
+      "extra": []
+    },
+    {
+      "name": "checkout-review-en",
+      "width": 320,
+      "mode": "text-spacing",
+      "violations": [],
+      "extra": []
+    },
+    {
+      "name": "checkout-authorizing-pl",
+      "width": 320,
+      "mode": "reflow",
+      "violations": [],
+      "extra": []
+    },
+    {
+      "name": "checkout-authorizing-pl",
+      "width": 320,
+      "mode": "text-spacing",
+      "violations": [],
+      "extra": []
+    },
+    {
+      "name": "checkout-submitted-pl",
+      "width": 320,
+      "mode": "reflow",
+      "violations": [],
+      "extra": []
+    },
+    {
+      "name": "checkout-submitted-pl",
+      "width": 320,
+      "mode": "text-spacing",
+      "violations": [],
+      "extra": []
+    },
+    {
+      "name": "checkout-confirmed-pl",
+      "width": 320,
+      "mode": "reflow",
+      "violations": [],
+      "extra": []
+    },
+    {
+      "name": "checkout-confirmed-pl",
+      "width": 320,
+      "mode": "text-spacing",
+      "violations": [],
+      "extra": []
+    },
+    {
+      "name": "checkout-rejected-pl",
+      "width": 320,
+      "mode": "reflow",
+      "violations": [],
+      "extra": []
+    },
+    {
+      "name": "checkout-rejected-pl",
+      "width": 320,
+      "mode": "text-spacing",
+      "violations": [],
+      "extra": []
+    },
+    {
+      "name": "checkout-sponsorship-pl",
+      "width": 320,
+      "mode": "reflow",
+      "violations": [],
+      "extra": []
+    },
+    {
+      "name": "checkout-sponsorship-pl",
+      "width": 320,
+      "mode": "text-spacing",
+      "violations": [],
+      "extra": []
+    },
+    {
+      "name": "checkout-reverted-pl",
+      "width": 320,
+      "mode": "reflow",
+      "violations": [],
+      "extra": []
+    },
+    {
+      "name": "checkout-reverted-pl",
+      "width": 320,
+      "mode": "text-spacing",
+      "violations": [],
+      "extra": []
+    },
+    {
+      "name": "checkout-invalid-pl",
+      "width": 320,
+      "mode": "reflow",
+      "violations": [],
+      "extra": []
+    },
+    {
+      "name": "checkout-invalid-pl",
+      "width": 320,
+      "mode": "text-spacing",
+      "violations": [],
+      "extra": []
+    },
+    {
+      "name": "profile-pl",
+      "width": 320,
+      "mode": "reflow",
+      "violations": [],
+      "extra": []
+    },
+    {
+      "name": "profile-pl",
+      "width": 320,
+      "mode": "text-spacing",
+      "violations": [],
+      "extra": []
+    },
+    {
+      "name": "profile-en",
+      "width": 320,
+      "mode": "reflow",
+      "violations": [],
+      "extra": []
+    },
+    {
+      "name": "profile-en",
+      "width": 320,
+      "mode": "text-spacing",
+      "violations": [],
+      "extra": []
+    }
+  ]
+}

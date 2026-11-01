@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-/* global require, process, console */
+/* global process, console */
 /**
  * Atrapa CLI `solc` oparta na solc-js (pakiet npm `solc`, przypięty), do uruchamiania Slithera OFFLINE,
  * gdy binarki solc nie da się pobrać (binaries.soliditylang.org zablokowane). Obsługuje tylko to, czego używa
@@ -8,11 +8,12 @@
  *   slither src/X.sol --solc scripts/solc-cli-shim.cjs --solc-remaps "@openzeppelin/contracts/=node_modules/@openzeppelin/contracts/"
  * Slither wykrywa foundry.toml i wymaga `forge` — uruchamiaj go w katalogu bez foundry.toml (kopia src + symlink node_modules).
  */
-const fs = require("node:fs");
-const path = require("node:path");
+import fs from "node:fs";
+import { createRequire } from "node:module";
+import path from "node:path";
 
-const pkgRoot = path.resolve(__dirname, "..");
-const solc = require(path.join(pkgRoot, "node_modules", "solc"));
+const pkgRoot = path.resolve(import.meta.dirname, "..");
+const solc = createRequire(import.meta.url)("solc");
 const args = process.argv.slice(2);
 
 function readImport(importPath) {

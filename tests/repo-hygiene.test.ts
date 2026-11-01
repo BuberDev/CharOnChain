@@ -71,7 +71,10 @@ describe("układ monorepo (COC-001)", () => {
 });
 
 describe("polityka zależności (CLAUDE.md pkt 4: przypięte wersje, bez latest)", () => {
-  const EXACT = /^(\d+\.\d+\.\d+(-[0-9A-Za-z.-]+)?|workspace:\*)$/;
+  // Dozwolone: dokładna wersja semver, workspace:* albo zależność z GitHuba przypięta do PEŁNEGO commita
+  // (nie gałąź, nie tag, nie zakres) — tak przypięty jest forge-std (brak wersji npm zgodnej z Foundry).
+  const EXACT =
+    /^(\d+\.\d+\.\d+(-[0-9A-Za-z.-]+)?|workspace:\*|github:[\w.-]+\/[\w.-]+#[0-9a-f]{40})$/;
 
   it("każda zależność ma dokładną wersję lub workspace:* (bez ^, ~, *, latest)", () => {
     const offenders: string[] = [];

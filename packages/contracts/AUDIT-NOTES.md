@@ -44,7 +44,7 @@ python3 -m venv /tmp/slither && /tmp/slither/bin/pip install slither-analyzer==0
 mkdir /tmp/slither-proj && cp -r packages/contracts/src /tmp/slither-proj/src
 ln -s "$PWD/packages/contracts/node_modules" /tmp/slither-proj/node_modules
 cd /tmp/slither-proj && /tmp/slither/bin/slither src/DonationRouter.sol \
-  --solc "$OLDPWD/packages/contracts/scripts/solc-cli-shim.cjs" \
+  --solc "$OLDPWD/packages/contracts/scripts/solc-cli-shim.mjs" \
   --solc-remaps "@openzeppelin/contracts/=node_modules/@openzeppelin/contracts/" --filter-paths node_modules
 ```
 

@@ -37,7 +37,7 @@ export default tseslint.config(
   },
   {
     // Konfiguracje JS nie są typowane.
-    files: ["**/*.mjs", "**/*.js"],
+    files: ["**/*.mjs", "**/*.js", "**/*.cjs"],
     ...tseslint.configs.disableTypeChecked,
   },
   {

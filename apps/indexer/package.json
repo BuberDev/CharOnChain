@@ -3,19 +3,24 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "main": "dist/index.js",
   "scripts": {
-    "build": "tsc -p tsconfig.build.json",
-    "typecheck": "tsc --noEmit -p tsconfig.json"
+    "build": "tsc --noEmit -p tsconfig.json",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "start": "tsx src/main.ts"
   },
   "devDependencies": {
-    "@types/node": "22.20.5",
-    "typescript": "6.0.3",
     "@charonchain/database": "workspace:*",
-    "@types/pg": "8.23.1"
+    "@types/node": "22.20.5",
+    "@types/pg": "8.23.1",
+    "tsx": "4.23.15",
+    "typescript": "6.0.3"
   },
   "dependencies": {
+    "@charonchain/shared": "workspace:*",
     "pg": "8.23.1",
     "viem": "2.57.13"
+  },
+  "exports": {
+    ".": "./src/index.ts"
   }
 }

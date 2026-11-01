@@ -69,6 +69,9 @@ importers:
 
   apps/indexer:
     dependencies:
+      '@charonchain/shared':
+        specifier: workspace:*
+        version: link:../../packages/shared
       pg:
         specifier: 8.23.1
         version: 8.23.1
@@ -85,6 +88,9 @@ importers:
       '@types/pg':
         specifier: 8.23.1
         version: 8.23.1
+      tsx:
+        specifier: 4.23.15
+        version: 4.23.15
       typescript:
         specifier: 6.0.3
         version: 6.0.3

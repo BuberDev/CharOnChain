@@ -4,7 +4,7 @@
  */
 import { decodeEventLog, type Hex } from "viem";
 
-import { ALL_EVENTS, type ContractKind } from "./abi.js";
+import { ALL_WATCHED_EVENTS, type ContractKind } from "./abi.js";
 import type { RawLog } from "./rpc.js";
 
 export interface DecodedEvent {
@@ -21,11 +21,11 @@ function normalize(value: unknown): string {
   throw new TypeError(`Nieobsługiwany typ argumentu zdarzenia: ${typeof value}`);
 }
 
-/** Zwraca `null` dla logów, których nie znamy (np. Transfer, RoleGranted) — to nie jest błąd. */
+/** Zwraca `null` dla logów, których nie znamy (np. Transfer) — to nie jest błąd. */
 export function decodeLog(log: RawLog, kind: ContractKind): DecodedEvent | null {
   try {
     const decoded = decodeEventLog({
-      abi: ALL_EVENTS,
+      abi: ALL_WATCHED_EVENTS,
       topics: log.topics as [Hex, ...Hex[]],
       data: log.data,
       strict: true,

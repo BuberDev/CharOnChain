@@ -9,7 +9,7 @@ import {
   rawFromJson,
   rawToJson,
   USDC_UNIT,
-} from "./usdc.js";
+} from "./usdc";
 
 /** Deterministyczny xorshift64 — fuzz bez zależności i bez niedeterminizmu w CI. */
 function* randoms(seed: bigint): Generator<bigint> {

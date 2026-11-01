@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
-import { ManifestError, parseManifest } from "./manifest.js";
-import { NATIVE_USDC_ARBITRUM_ONE } from "./networks.js";
+import { ManifestError, parseManifest } from "./manifest";
+import { NATIVE_USDC_ARBITRUM_ONE } from "./networks";
 
 // Adresy syntetyczne składające się z cyfr (suma kontrolna EIP-55 nie ma wpływu na zapis).
 const A = (n: number): string => `0x${String(n).repeat(40)}`;

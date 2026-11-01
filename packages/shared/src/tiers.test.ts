@@ -1,14 +1,7 @@
 import { describe, expect, it } from "vitest";
 
-import {
-  progressToNextTier,
-  TIERS,
-  tierFromRaw,
-  tierInfo,
-  xpFromRaw,
-  XP_DIVISOR,
-} from "./tiers.js";
-import { MAX_UINT256, USDC_UNIT } from "./usdc.js";
+import { progressToNextTier, TIERS, tierFromRaw, tierInfo, xpFromRaw, XP_DIVISOR } from "./tiers";
+import { MAX_UINT256, USDC_UNIT } from "./usdc";
 
 describe("progi lig — AC-16", () => {
   it("tabela z AC-16: sumy (USDC) → liga", () => {

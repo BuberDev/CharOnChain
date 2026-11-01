@@ -14,7 +14,7 @@ import {
   NETWORKS,
   resolveDefaultChainId,
   UnsupportedChainError,
-} from "./networks.js";
+} from "./networks";
 
 const REPO_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "../../..");
 

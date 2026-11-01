@@ -12,9 +12,10 @@ function git(...args: string[]): string {
 }
 
 function trackedFiles(): string[] {
+  // Pliki usunięte w katalogu roboczym, a jeszcze niezacommitowane, nie istnieją na dysku.
   return git("ls-files", "-z")
     .split("\0")
-    .filter((f) => f.length > 0);
+    .filter((f) => f.length > 0 && existsSync(join(ROOT, f)));
 }
 
 function read(rel: string): string {

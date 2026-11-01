@@ -7,7 +7,7 @@
  * To lustro `ReputationSBT.tierOf` do wyświetlania i testów. Źródłem prawdy jest kontrakt;
  * przy niezgodności UI czyta kontrakt (docs/03 `donor_stats` to cache).
  */
-import { MAX_UINT256, USDC_UNIT } from "./usdc.js";
+import { MAX_UINT256, USDC_UNIT } from "./usdc";
 
 export const XP_DIVISOR = 100_000n;
 

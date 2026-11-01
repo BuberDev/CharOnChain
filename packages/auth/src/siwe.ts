@@ -5,7 +5,7 @@
  */
 import { createHash, randomBytes } from "node:crypto";
 
-import { createSiweMessage, parseSiweMessage, type SiweMessage } from "viem/siwe";
+import { createSiweMessage, parseSiweMessage } from "viem/siwe";
 import { getAddress, isAddress, type Address, type Hex } from "viem";
 
 export const NONCE_TTL_SECONDS = 300;
@@ -72,7 +72,13 @@ export type SiweFailure =
 export type SiweValidation =
   | {
       readonly ok: true;
-      readonly message: SiweMessage & { address: Address; chainId: number; nonce: string };
+      readonly message: {
+        address: Address;
+        domain: string;
+        chainId: number;
+        nonce: string;
+        uri: string;
+      };
     }
   | { readonly ok: false; readonly code: SiweFailure };
 
@@ -87,9 +93,9 @@ export interface SiweExpectations {
 
 /** Waliduje treść wiadomości (BEZ sprawdzania podpisu i nonce w bazie). */
 export function validateSiweMessage(raw: string, expected: SiweExpectations): SiweValidation {
-  let parsed: SiweMessage;
+  let parsed: ReturnType<typeof parseSiweMessage>;
   try {
-    parsed = parseSiweMessage(raw) as SiweMessage;
+    parsed = parseSiweMessage(raw);
   } catch {
     return { ok: false, code: "MALFORMED" };
   }
@@ -125,7 +131,7 @@ export function validateSiweMessage(raw: string, expected: SiweExpectations): Si
   if (expirationTime.getTime() - issuedAt.getTime() > MAX_MESSAGE_LIFETIME_SECONDS * 1000) {
     return { ok: false, code: "LIFETIME_TOO_LONG" };
   }
-  return { ok: true, message: { ...parsed, address, chainId, nonce } };
+  return { ok: true, message: { address, domain, chainId, nonce, uri } };
 }
 
 /**

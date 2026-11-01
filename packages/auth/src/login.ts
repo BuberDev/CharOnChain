@@ -49,7 +49,7 @@ export async function login(
 
   const consumed = await consumeNonce(db, {
     nonceHash: hashNonce(nonce),
-    domain: domain ?? expectations.domain,
+    domain,
     chainId,
     wallet: address,
   });

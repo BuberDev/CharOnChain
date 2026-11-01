@@ -22,7 +22,7 @@ describe("RFC 8785 — przykłady z dokumentu", () => {
 
   it("serializuje liczby jak ECMAScript (tabela z §3.2.2.3)", () => {
     const cases: [number, string][] = [
-      [333333333.33333329, "333333333.3333333"],
+      [Number("333333333.33333329"), "333333333.3333333"],
       [1e30, "1e+30"],
       [4.5, "4.5"],
       [0.002, "0.002"],
@@ -31,7 +31,7 @@ describe("RFC 8785 — przykłady z dokumentu", () => {
       [-0, "0"],
       [1.0, "1"],
       [1e21, "1e+21"],
-      [123456789012345680000, "123456789012345680000"],
+      [Number("123456789012345680000"), "123456789012345680000"],
       [-1e-7, "-1e-7"],
     ];
     for (const [value, expected] of cases) expect(canonicalize(value)).toBe(expected);
@@ -39,7 +39,7 @@ describe("RFC 8785 — przykłady z dokumentu", () => {
 
   it("przykład z §3.2.2: literały, napisy i tablica", () => {
     const input = {
-      numbers: [333333333.33333329, 1e30, 4.5, 2e-3, 1e-27],
+      numbers: [Number("333333333.33333329"), 1e30, 4.5, 2e-3, 1e-27],
       string: "\u20ac$\u000f\u000aA'\u0042\u0022\u005c\\\"/",
       literals: [null, true, false],
     };

@@ -4,5 +4,5 @@
     "noEmit": true,
     "types": ["node"]
   },
-  "include": ["tests", "vitest.config.ts", "vitest.db.config.ts", "vitest.deploy.config.ts"]
+  "include": ["tests", "vitest.config.ts", "vitest.db.config.ts", "vitest.chain.config.ts"]
 }

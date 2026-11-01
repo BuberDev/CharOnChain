@@ -23,7 +23,7 @@ W środowisku deweloperskim `foundry.paradigm.xyz` i `binaries.soliditylang.org`
 
 ## Wdrożenie (COC-016)
 
-`deploy/deploy.ts` (biblioteka viem) wdraża cztery kontrakty, nadaje role operacyjne, a na końcu planuje `beginDefaultAdminTransfer(adminSafe)` w każdym kontrakcie; Safe musi osobno wywołać `acceptDefaultAdminTransfer()` po upływie opóźnienia (do tego czasu manifest ma status `ADMIN_TRANSFER_PENDING`). Wdrażający nie zachowuje żadnej roli; stan jest weryfikowany odczytem z łańcucha (`verifyDeployment`). Testy: `pnpm test:deploy` (łańcuch w procesie, wymaga `build`).
+`deploy/deploy.ts` (biblioteka viem) wdraża cztery kontrakty, nadaje role operacyjne, a na końcu planuje `beginDefaultAdminTransfer(adminSafe)` w każdym kontrakcie; Safe musi osobno wywołać `acceptDefaultAdminTransfer()` po upływie opóźnienia (do tego czasu manifest ma status `ADMIN_TRANSFER_PENDING`). Wdrażający nie zachowuje żadnej roli; stan jest weryfikowany odczytem z łańcucha (`verifyDeployment`). Testy: `pnpm test:chain` (łańcuch w procesie EDR; buduje kontrakty). Ten sam łańcuch w procesie (`@charonchain/contracts/testing`) służy testom weryfikatora podpisów kont kontraktowych w `packages/auth`.
 
 CLI Sepolia (`deploy/cli.ts`) obsługuje wyłącznie Arbitrum Sepolia, klucz tylko z `DEPLOYER_PRIVATE_KEY`, domyślnie drukuje plan bez transakcji (`--execute` wysyła). Nie był uruchomiony na żadnej sieci publicznej.
 

@@ -112,6 +112,8 @@ jobs:
       - run: pnpm install --frozen-lockfile
       # Kompilator: solc-js 0.8.28 z pakietu npm (przypięty), bez pobierania binariów.
       - run: pnpm check:contracts
+      # Testy na łańcuchu w procesie (EDR): skrypt wdrożenia, weryfikator podpisów kont kontraktowych (ERC-1271/6492).
+      - run: pnpm test:chain
 
   contracts-foundry:
     name: Contracts (forge) — niezależna weryfikacja tych samych testów

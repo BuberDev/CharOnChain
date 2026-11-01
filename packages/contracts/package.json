@@ -6,9 +6,9 @@
     "build": "hardhat build",
     "test": "hardhat test solidity",
     "typecheck": "tsc --noEmit -p tsconfig.json",
-    "check": "pnpm run typecheck && pnpm run build && pnpm run test && pnpm run test:deploy",
-    "test:deploy": "vitest run --config vitest.deploy.config.ts --root ../..",
-    "deploy:sepolia": "tsx deploy/cli.ts"
+    "check": "pnpm run typecheck && pnpm run build && pnpm run test",
+    "deploy:sepolia": "tsx deploy/cli.ts",
+    "test:chain": "vitest run --config vitest.chain.config.ts --root ../.."
   },
   "devDependencies": {
     "@openzeppelin/contracts": "5.6.1",
@@ -23,5 +23,9 @@
   "dependencies": {
     "@charonchain/shared": "workspace:*",
     "viem": "2.57.13"
+  },
+  "exports": {
+    "./testing": "./deploy/local-chain.ts",
+    "./artifacts": "./deploy/artifacts.ts"
   }
 }

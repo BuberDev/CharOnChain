@@ -14,6 +14,8 @@ export interface ApiContext {
   /** Sieć środowiska (421614 / 42161): wszystkie odczyty są ograniczone do niej. */
   readonly chainId: number;
   readonly requestId: string;
+  /** Próg nieaktualności projekcji (s); domyślnie 300. */
+  readonly staleAfterSeconds?: number;
 }
 
 export interface ApiResponse {

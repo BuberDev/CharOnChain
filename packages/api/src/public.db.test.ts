@@ -23,6 +23,7 @@ import {
   escapeLike,
   getCampaign,
   getDonor,
+  getProjectionStatus,
   getOrganization,
   listCampaignDonations,
   listCampaignReports,
@@ -110,10 +111,11 @@ async function addDonation(
   donor: string,
   amountRaw: string,
   options: { state?: "CONFIRMED" | "OBSERVED"; blockTime?: string; chainId?: number } = {},
-): Promise<void> {
+): Promise<string> {
   const state = options.state ?? "CONFIRMED";
   const chainId = options.chainId ?? CHAIN;
   eventTx += 1;
+  const txHash = hexHash(0x70000 + eventTx);
   const event = await client.query<{ id: string }>(
     `insert into public.chain_events
        (chain_id, contract_lower, event_name, tx_hash, log_index, block_number, block_hash, tx_index, args,
@@ -123,7 +125,7 @@ async function addDonation(
     [
       chainId,
       hexAddr(0xa1),
-      hexHash(0x70000 + eventTx),
+      txHash,
       hexHash(0xb1),
       JSON.stringify({ amountRaw }),
       state,
@@ -148,6 +150,34 @@ async function addDonation(
       state === "CONFIRMED" ? "CONFIRMED" : "PENDING",
     ],
   );
+  return txHash;
+}
+
+async function seedCursors(
+  options: {
+    count?: number;
+    errorOn?: number;
+    ageSeconds?: number;
+    staleOn?: number;
+    chainId?: number;
+  } = {},
+): Promise<void> {
+  const count = options.count ?? 4;
+  for (let i = 0; i < count; i += 1) {
+    await client.query(
+      `insert into public.indexer_cursors
+         (chain_id, contract_lower, last_scanned_block, last_confirmed_block, status, updated_at)
+       values ($1, $2, $3, $4, $5::app.indexer_status, now() - make_interval(secs => $6))`,
+      [
+        options.chainId ?? CHAIN,
+        hexAddr(0xa1 + i),
+        1000 + i,
+        988 + i,
+        options.errorOn === i ? "ERROR" : "IDLE",
+        options.staleOn === i ? 600 : (options.ageSeconds ?? 1),
+      ],
+    );
+  }
 }
 
 describe("GET /campaigns", () => {
@@ -337,10 +367,13 @@ describe("GET /campaigns/:slug/donations", () => {
   it("tylko potwierdzone; stronicowanie przy identycznych block_time nie gubi ani nie dubluje", async () => {
     const c = await createPublishedCampaign(client, { onchainCampaignId: 1 });
     await setSlug(c.id, "wplaty");
+    const txs: string[] = [];
     for (let n = 1; n <= 5; n += 1) {
-      await addDonation(c, hexAddr(0xd000 + n), String(n * 1_000_000), {
-        blockTime: "2026-11-01T12:00:00.000000Z",
-      });
+      txs.push(
+        await addDonation(c, hexAddr(0xd000 + n), String(n * 1_000_000), {
+          blockTime: "2026-11-01T12:00:00.000000Z",
+        }),
+      );
     }
     await addDonation(c, hexAddr(0xdead), "9000000", { state: "OBSERVED" });
     const seen: string[] = [];
@@ -362,6 +395,13 @@ describe("GET /campaigns/:slug/donations", () => {
         .sort(),
     ).toEqual(["1000000", "2000000", "3000000", "4000000", "5000000"]);
     expect(JSON.stringify(all.body)).not.toContain("dead");
+    // Dowód on-chain: każdy wiersz wskazuje transakcję zdarzenia (a nie obserwowanej, niepotwierdzonej wpłaty).
+    expect(
+      items(all)
+        .map((i) => i.txHash)
+        .sort(),
+    ).toEqual([...txs].sort());
+    expect(items(all)[0]).toMatchObject({ logIndex: 0, blockNumber: "100" });
   });
 
   it("404 dla nieopublikowanej kampanii", async () => {
@@ -538,5 +578,86 @@ describe("kopertowanie błędów i kursory", () => {
     expect(asApp.rowCount).toBe(0);
     const res = await asApi(() => getOrganization(ctx, org.id));
     expect(JSON.stringify(res.body)).not.toContain("tajny@example.org");
+  });
+});
+
+describe("status projekcji (AC-33)", () => {
+  it("brak kursorów lub niepełny skan → UNAVAILABLE i sumy niefinalne", async () => {
+    expect(await asApi(() => getProjectionStatus(ctx))).toMatchObject({
+      state: "UNAVAILABLE",
+      final: false,
+    });
+    await seedCursors({ count: 3 });
+    expect(await asApi(() => getProjectionStatus(ctx))).toMatchObject({
+      state: "UNAVAILABLE",
+      final: false,
+    });
+  });
+
+  it("sprawny indexer → OK i final; confirmedBlock to najsłabszy kursor", async () => {
+    await seedCursors();
+    expect(await asApi(() => getProjectionStatus(ctx))).toEqual({
+      state: "OK",
+      confirmedBlock: "988",
+      ageSeconds: 1,
+      final: true,
+    });
+  });
+
+  it("status ERROR (np. niezgodność z kontraktem) → sumy niefinalne", async () => {
+    await seedCursors({ errorOn: 2 });
+    expect(await asApi(() => getProjectionStatus(ctx))).toMatchObject({
+      state: "ERROR",
+      final: false,
+    });
+  });
+
+  it("kursor, który stoi dłużej niż próg → STALE; próg jest konfigurowalny", async () => {
+    await seedCursors({ ageSeconds: 600 });
+    expect(await asApi(() => getProjectionStatus(ctx))).toMatchObject({
+      state: "STALE",
+      final: false,
+      ageSeconds: 600,
+    });
+    expect(
+      await asApi(() => getProjectionStatus({ ...ctx, staleAfterSeconds: 1200 })),
+    ).toMatchObject({ state: "OK", final: true });
+  });
+
+  it("wystarczy JEDEN stojący kursor, by dane były nieaktualne (liczy się najstarszy)", async () => {
+    await seedCursors({ staleOn: 3 });
+    expect(await asApi(() => getProjectionStatus(ctx))).toMatchObject({
+      state: "STALE",
+      final: false,
+    });
+  });
+
+  it("kursory innej sieci nie wpływają na status bieżącej sieci", async () => {
+    await seedCursors({ chainId: 42161 });
+    expect(await asApi(() => getProjectionStatus(ctx))).toMatchObject({ state: "UNAVAILABLE" });
+  });
+
+  it("wszystkie odpowiedzi z sumami niosą status projekcji; sumy nie są ukrywane, tylko oznaczone", async () => {
+    const c = await createPublishedCampaign(client, { onchainCampaignId: 1 });
+    await setSlug(c.id, "ze-statusem");
+    await addDonation(c, hexAddr(0xa11ce), "2000000");
+    await client.query(
+      "insert into public.donor_profiles (chain_id, wallet_lower, display_name, profile_public) values ($1, $2, 'A', true)",
+      [CHAIN, hexAddr(0xa11ce)],
+    );
+    await seedCursors({ errorOn: 0 });
+    const responses = await asApi(() =>
+      Promise.all([
+        listCampaigns(ctx, {}),
+        getCampaign(ctx, "ze-statusem"),
+        listCampaignDonations(ctx, "ze-statusem", {}),
+        getDonor(ctx, String(CHAIN), hexAddr(0xa11ce)),
+      ]),
+    );
+    for (const r of responses) {
+      expect((body(r).projection as { state: string; final: boolean }).state).toBe("ERROR");
+      expect((body(r).projection as { final: boolean }).final).toBe(false);
+    }
+    expect((items(responses[0])[0] as Item).raisedRaw).toBe("2000000");
   });
 });

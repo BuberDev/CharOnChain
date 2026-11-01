@@ -32,6 +32,62 @@ export const listCampaignsQuery = z.object({
 
 const pageQuery = z.object({ limit: LIMIT, cursor: CURSOR });
 
+/** Po tylu sekundach bez aktualizacji kursora dane uznajemy za nieaktualne (zgodnie z progiem alarmu indexera). */
+export const DEFAULT_STALE_AFTER_SECONDS = 300;
+
+export type ProjectionState = "OK" | "STALE" | "ERROR" | "UNAVAILABLE";
+
+export interface ProjectionStatus {
+  /** `OK` = indexer działa i ostatnie uzgadnianie z kontraktem nie wykryło różnic. Inaczej sumy NIE są finalne. */
+  readonly state: ProjectionState;
+  /** Ostatni blok, do którego projekcja jest potwierdzona (najsłabszy kursor) — jako ciąg dziesiętny. */
+  readonly confirmedBlock: string | null;
+  readonly ageSeconds: number | null;
+  /** Czy sumy ("zebrano", statystyki) wolno pokazywać jako ostateczne (AC-33). */
+  readonly final: boolean;
+}
+
+/**
+ * Status projekcji z `public_indexer_status` (AC-33): gdy indexer stoi, ma błąd albo nie ma danych, API
+ * oznacza sumy jako niefinalne zamiast je ukrywać lub pokazywać jako pewne.
+ */
+export async function getProjectionStatus(ctx: ApiContext): Promise<ProjectionStatus> {
+  const result = await ctx.db.query<{
+    cursors: number;
+    confirmed_block: string;
+    has_error: boolean;
+    age_seconds: number;
+  }>(
+    `select cursors, confirmed_block::text as confirmed_block, has_error, age_seconds
+       from public.public_indexer_status where chain_id = $1`,
+    [ctx.chainId],
+  );
+  const row = result.rows[0];
+  if (row === undefined || row.cursors < EXPECTED_CURSORS) {
+    return {
+      state: "UNAVAILABLE",
+      confirmedBlock: row?.confirmed_block ?? null,
+      ageSeconds: row?.age_seconds ?? null,
+      final: false,
+    };
+  }
+  const staleAfter = ctx.staleAfterSeconds ?? DEFAULT_STALE_AFTER_SECONDS;
+  const state: ProjectionState = row.has_error
+    ? "ERROR"
+    : row.age_seconds > staleAfter
+      ? "STALE"
+      : "OK";
+  return {
+    state,
+    confirmedBlock: row.confirmed_block,
+    ageSeconds: Math.round(row.age_seconds),
+    final: state === "OK",
+  };
+}
+
+/** Indexer śledzi cztery kontrakty SC-1.0; mniej kursorów oznacza niepełny skan. */
+const EXPECTED_CURSORS = 4;
+
 const ok = (body: unknown): ApiResponse => ({ status: 200, body, headers: PUBLIC_CACHE_HEADERS });
 const notFound = (what: string): ApiError =>
   new ApiError(404, "NOT_FOUND", `Nie znaleziono: ${what}.`);
@@ -136,6 +192,7 @@ export async function listCampaigns(ctx: ApiContext, rawQuery: unknown): Promise
   const last = page.at(-1);
   const hasMore = result.rows.length > query.limit;
   return ok({
+    projection: await getProjectionStatus(ctx),
     items: page.map(campaignDto),
     nextCursor:
       hasMore && last !== undefined ? encodeCursor({ t: last.cursor_ts, i: last.id }) : null,
@@ -212,6 +269,7 @@ export async function getCampaign(ctx: ApiContext, rawSlug: unknown): Promise<Ap
   if (row === undefined) throw notFound("kampania");
   const dto = campaignDto(row);
   return ok({
+    projection: await getProjectionStatus(ctx),
     data: {
       ...dto,
       descriptionMd: row.description_md,
@@ -248,6 +306,9 @@ interface DonationRow {
   donor_wallet_lower: string;
   amount_raw: string;
   block_time: Date;
+  tx_hash: string;
+  log_index: number;
+  block_number: string;
   cursor_ts: string;
 }
 
@@ -270,6 +331,7 @@ export async function listCampaignDonations(
   values.push(query.limit + 1);
   const result = await ctx.db.query<DonationRow>(
     `select d.id, d.donor_wallet_lower, d.amount_raw::text as amount_raw, d.block_time,
+            d.tx_hash, d.log_index, d.block_number::text as block_number,
             ${CURSOR_TS("d.block_time")} as cursor_ts
        from public.public_donations d
       where d.campaign_id = $1 ${cursorSql}
@@ -280,11 +342,16 @@ export async function listCampaignDonations(
   const page = result.rows.slice(0, query.limit);
   const last = page.at(-1);
   return ok({
+    projection: await getProjectionStatus(ctx),
     items: page.map((row) => ({
       id: row.id,
       donor: row.donor_wallet_lower,
       amountRaw: row.amount_raw,
       blockTime: row.block_time.toISOString(),
+      // Dowód: transakcja i zdarzenie w łańcuchu (link do eksploratora buduje frontend).
+      txHash: row.tx_hash,
+      logIndex: row.log_index,
+      blockNumber: row.block_number,
     })),
     nextCursor:
       result.rows.length > query.limit && last !== undefined
@@ -355,6 +422,7 @@ export async function getDonor(
   );
   const total = BigInt(totals.rows[0]?.total ?? "0");
   return ok({
+    projection: await getProjectionStatus(ctx),
     data: {
       chainId,
       wallet,

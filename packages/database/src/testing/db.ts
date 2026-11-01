@@ -96,6 +96,20 @@ export async function catalogSnapshot(client: Client): Promise<string[]> {
       where a.attnum > 0 and not a.attisdropped and c.relkind in ('r', 'p')
         and n.nspname not like 'pg\\_%' and n.nspname not in ('information_schema', 'private')
     union all
+    select 'view:' || n.nspname || '.' || c.relname || ':' || coalesce(c.reloptions::text, '') || ':'
+        || pg_get_viewdef(c.oid)
+      from pg_class c join pg_namespace n on n.oid = c.relnamespace
+      where c.relkind = 'v'
+        and n.nspname not like 'pg\\_%' and n.nspname not in ('information_schema', 'private')
+    union all
+    select 'grant:' || n.nspname || '.' || c.relname || ':' || acl.grantee::regrole::text || ':' || acl.privilege_type
+      from pg_class c
+      join pg_namespace n on n.oid = c.relnamespace
+      cross join lateral aclexplode(c.relacl) acl
+      where c.relkind in ('r', 'p', 'v')
+        and n.nspname not like 'pg\\_%' and n.nspname not in ('information_schema', 'private')
+        and acl.grantee <> c.relowner
+    union all
     select 'constraint:' || n.nspname || '.' || coalesce(c.relname, t.typname) || ':' || con.conname
         || ':' || pg_get_constraintdef(con.oid)
       from pg_constraint con

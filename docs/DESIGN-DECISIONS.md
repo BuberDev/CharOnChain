@@ -1,13 +1,13 @@
 # CharOnChain — rejestr decyzji wizualnych
 
-**STATUS: KIERUNEK B „KWIT” WYBRANY PRZEZ WŁAŚCICIELA (2026-10-31); tokeny i preview w toku (COC-003/003A).** Poniższe sekcje 0–5 to historia propozycji sprzed wyboru. Nie oznacza to zatwierdzenia logo, palety, krojów pisma ani zdjęć. Żaden kierunek nie został jeszcze zbudowany; **nie ma** screenshotów, inspekcji w przeglądarce ani preview — powstaną po Twoim wyborze (COC-003A).
+**STATUS: KIERUNEK B „KWIT” WYBRANY PRZEZ WŁAŚCICIELA (2026-10-31); preview home / zbiórka / checkout / profil ZBUDOWANY i sprawdzony w przeglądarce (COC-003/003A: IN_REVIEW).** Sekcje 0–5 to historia propozycji sprzed wyboru. Wynik budowy, oceny, dostępność i usterki: `design-evidence/COC-003A/` (`design-brief.md`, `review.md`, `a11y.md`). Nie oznacza to zatwierdzenia logo, palety, krojów ani treści; wszystkie dane na ekranach to DEMO.
 
 ## 0. Realne użycie skilli (stan 2026-10-31)
 
 | Skill | Źródło / wersja | Co faktycznie wykonano | Czego jeszcze NIE wykonano |
 |---|---|---|---|
-| `frontend-design` (Anthropic) | `/mnt/skills/public/frontend-design/SKILL.md` (przeczytany w całości) | plan tokenów (kolor, typografia, układ, zasady), wireframe'y ASCII, przegląd planu pod kątem „generycznych domyślnych” (sekcja 4) | budowa kodu, screenshoty, krytyka obrazów |
-| `design-taste-frontend` (Taste) | `leonxlnx/taste-skill`, `skills/taste-skill/SKILL.md`, hash folderu `6ac8ba60…fb0d`, zainstalowany 2026-10-31 za zgodą właściciela (`npx skills add … -g --copy`). `SKILL.md` identyfikuje się jako „tasteskill v2”; numer drobny niepotwierdzony (`docs/08` podaje v2.1.x) | kroki 1–4 procedury: brief, inwentarz tematu, argument sekcji, losowanie kierunków `draw.mjs` (2 losowania, 4 pełne arkusze), zdanie-idea z testem konkurenta; przegląd skryptów skilla przed uruchomieniem (brak sieci w `draw/lint`, Chrome tylko lokalnie) | krok 6–10: build, `lint.mjs`, `inspect.mjs`, krytyka screenshotów, warstwa ruchu. `inspect.mjs` wymaga Chromium bez `--no-sandbox` jako root → potrzebny wrapper w `CHROME_PATH` |
+| `frontend-design` (Anthropic) | `/mnt/skills/public/frontend-design/SKILL.md` (przeczytany w całości) | plan tokenów (kolor, typografia, układ, zasady), wireframe'y ASCII, przegląd planu pod kątem „generycznych domyślnych” (sekcja 4) | (zaktualizowano) wykonano w COC-003A: budowa UI na tokenach, przegląd renderów, korekty po przeglądzie; brak: test z użytkownikami |
+| `design-taste-frontend` (Taste) | `leonxlnx/taste-skill`, `skills/taste-skill/SKILL.md`, hash folderu `6ac8ba60…fb0d`, zainstalowany 2026-10-31 za zgodą właściciela (`npx skills add … -g --copy`). `SKILL.md` identyfikuje się jako „tasteskill v2”; numer drobny niepotwierdzony (`docs/08` podaje v2.1.x) | kroki 1–4 procedury: brief, inwentarz tematu, argument sekcji, losowanie kierunków `draw.mjs` (2 losowania, 4 pełne arkusze), zdanie-idea z testem konkurenta; przegląd skryptów skilla przed uruchomieniem (brak sieci w `draw/lint`, Chrome tylko lokalnie) | (zaktualizowano) wykonano w COC-003A: build, `lint.mjs` (0 FAIL, 1 WARN), `inspect.mjs` na finalnym buildzie (wyniki w `design-evidence/COC-003A/review.md`), krytyka według `critique.md`, warstwa ruchu (z odstępstwem: „drukowanie kwitu” zamiast przenikania). `inspect.mjs` wymaga Chromium bez `--no-sandbox` jako root → wrapper w `CHROME_PATH` |
 
 Skrypty skilla zapisują pamięć losowań w `~/.taste-skill/`; w tej sesji przekierowana do katalogu roboczego (`TASTE_SKILL_HISTORY`). Pliki robocze `.taste-skill/` są w `.gitignore`.
 
@@ -124,13 +124,13 @@ Zasady wspólne dla wszystkich kierunków: bez fikcyjnych KPI, darczyńców i �
 
 ## Zapis wyboru
 
-- Numer ADR i data: DD-001, 2026-10-31 (PROPOSED)
+- Numer ADR i data: DD-001, 2026-10-31 (PROPOSED; wybór właściciela zapisany, zatwierdzenie logo/palety/krojów/treści nadal TBD)
 - Wybrany kierunek: **B — Kwit** (`page-is-the-object`), wybór właściciela z 2026-10-31
 - Krótkie uzasadnienie względem celu zbiórek i potrzeby zaufania: kwit z publicznie sprawdzalnym dowodem jest produktem CharOnChain; jedna metafora łączy katalog, checkout i odznakę; zrozumiały dla Beginnera (decyzja zgodna z rekomendacją, sekcja 5)
-- Tokeny palette/type/spacing/motion: kandydaci w sekcji 3; ostateczne po wyborze
-- Rzeczywiście uruchomione skille (źródło i wersja, nie przypuszczenie): sekcja 0
-- Linki do prawdziwych renderów i screenshotów: brak — jeszcze nie wykonano
-- Wyniki oceny PL/EN i 360/390/768/1280/1440: brak — jeszcze nie wykonano
-- Problemy oraz poprawki (2 iteracje): brak — jeszcze nie wykonano
-- Testy dostępności i kontrastu: kontrast par kolorów policzony (sekcja 3); axe/Playwright — jeszcze nie wykonano
-- Decyzja końcowa: TBD
+- Tokeny palette/type/spacing/motion: **finalne wartości w `packages/ui/src/styles.css`, opis w `design-evidence/COC-003A/design-brief.md` §3** (granat `#0C1527`, papier `#F6F9FC`, pole `#E4EBF4`, tusz `#162033`, mięta `#53D5AE` tylko na granacie lub jako wypełnienie przycisku; Libre Franklin + Source Serif 4, self-hosted)
+- Rzeczywiście uruchomione skille (źródło i wersja, nie przypuszczenie): sekcja 0; ślady narzędzi: `lint.mjs`, `inspect.mjs` (tryb strony i `--app`), `draw.mjs`
+- Linki do prawdziwych renderów i screenshotów: `design-evidence/COC-003A/screenshots/` (PL: home, zbiórka, checkout-review, profil × 360/390/768/1280/1440 oraz 320; stany zbiórki i checkoutu × 390/1440; EN × 390/1440), `screenshots-reduced-motion/`, `screenshots-states/` (błędy walidacji, fokus, menu mobilne, odznaka przed/po)
+- Wyniki oceny PL/EN i 360/390/768/1280/1440: `design-evidence/COC-003A/review.md` (inspektor Taste, krytyka z punktacją i limitami); `overflowX = 0` na wszystkich zrzutach
+- Problemy oraz poprawki (2 iteracje): `review.md` — rundy 1 i 2 opisane z usterkami i naprawami; **zrzuty „przed” z rund 1–2 nie były archiwizowane** (AC-42 PARTIAL); runda 3 jest pierwszą z punktacją
+- Testy dostępności i kontrastu: `a11y.md` (axe 83/83 bez naruszeń, fokus, cele dotykowe, reflow 320 px, odstępy tekstu, reduced-motion; kontrast policzony skryptem); **brak** testu z czytnikiem ekranu i z użytkownikami
+- Decyzja końcowa: **IN_REVIEW** — AC-38 czeka na uwagi właściciela, AC-42 PARTIAL, AC-43 niezbadane. Nie wolno oznaczać COC-047 jako DONE (warunek: AC-36..43 PASS).

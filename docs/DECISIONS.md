@@ -34,6 +34,12 @@
 - **ADR-112 (ACCEPTED 2026-10-31 przez właściciela, DOC-01):** `donations.amount_raw > 0` zamiast `>= 1000000`, bo poprzednie odrzucałoby legalną końcówkę celu (`docs/10` §5). Minimum 1 USDC (z wyjątkiem końcówki) egzekwuje kontrakt.
 - **ADR-113 (PROPOSED, DOC-05):** opcjonalna kontrola on-chain beneficjenta (Safe, próg ≥2) w `createCampaign` — zmiana dotyka przepływu pieniędzy.
 
+## Propozycje z UI (COC-003/003A) — PROPOSED, czekają na decyzję właściciela
+
+- **ADR-114 (PROPOSED) — słownictwo Beginner w EN.** `docs/04` (zasada językowa) zakazuje „gas/approve/seed/sieć” na ścieżce głównej. Polski interfejs jest zgodny i ma test jednostkowy; angielski używa jeszcze „network fee”, „approve”, „network”. Propozycja: „transfer fee”, „confirm”, „transfer” na ścieżce głównej, „network” tylko w szczegółach technicznych. Do akceptacji razem z kopią PL (tłumaczenia są wersją roboczą do przeglądu UX/prawnego).
+- **ADR-115 (PROPOSED) — obrazy autentyczne.** Strona nie ma zdjęć ani wideo, bo CharOnChain nie ma zatwierdzonych materiałów beneficjentów (AC-41, `CLAUDE.md` pkt 20). Skutek: ostrzeżenia Taste `no-real-pictures`/`no-footage` i limit oceny „design ≤ 6,5”. Propozycja: zdjęcia wyłącznie od organizacji, z pisemną zgodą na publikację wizerunku (RODO) i metadanymi pochodzenia; do tego czasu fragmenty interfejsu i oznaczone DEMO placeholdery.
+- **ADR-116 (PROPOSED) — wyjątek od „kształt zamiast ramek”.** Pole kwoty ma funkcjonalne obramowanie 2 px (`ink-soft`, 8,3:1), bo bez niego granica pola ma 1,14:1 (WCAG 1.4.11). Pozostałe powierzchnie nadal używają masek.
+
 ## Możliwe P1 — wymaga nowego PRD/ADR i threat modelu
 
 - natywny BTC lub wrapped assets;

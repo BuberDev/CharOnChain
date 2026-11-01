@@ -44,6 +44,9 @@
 - **ADR-118 (PROPOSED) — publiczność `registry_number`.** `docs/03` zostawia ją „wg polityki”; widok `public_organizations` jej **nie** zawiera (wariant bezpieczny). Decyzja prawna/UX: czy numer rejestru ma być publiczny (zaufanie) czy prywatny (minimalizacja danych).
 - **ADR-119 (PROPOSED) — retencja danych prywatnych.** Kolumny `retention_until` istnieją (`organization_private`, `abuse_reports`), automatycznego usuwania nie ma; potrzebna polityka prawna (okresy, podstawa, procedura usunięcia plików z Storage i `audit_logs`, które są append-only).
 
+- **ADR-120 (PROPOSED) — definicja `orgHash` i metadanych przy tworzeniu kampanii (COC-033).** `docs/02` nazywa `orgHash` niezmiennym (INV-05), ale nie mówi, z czego powstaje. Implementacja używa `keccak256("charonchain:org:v1:" + uuid organizacji)` (bez danych osobowych, stabilny mimo zmiany nazwy). `metadataHash` = SHA-256 kanonicznego JSON (RFC 8785) niezmiennej rewizji, którą zatwierdził recenzent (pola: tytuł, opis, kategoria, slug, limit, okno czasu w sekundach, beneficjent, sieć, id organizacji). Czasy kampanii są zapisywane co do sekundy (zgodnie z `uint64` on-chain). **Obie wartości trafiają na łańcuch i są niezmienne — nie wdrażać na sieć publiczną przed decyzją właściciela.**
+- **ADR-121 (PROPOSED) — przepływ organizacji w API.** (1) Zatwierdzenie organizacji (KYB, ustawienie `verified_at`) nie ma jeszcze endpointu: wymaga procesu weryfikacji i decyzji prawnej (dane osobowe w `organization_private`: imię i e-mail osoby kontaktowej są opcjonalne i jeszcze nie przetwarzane produkcyjnie); (2) szkic kampanii może założyć wyłącznie zatwierdzona organizacja, a beneficjentem jest zawsze jej zweryfikowany Safe; (3) `cancel-publication` (PUBLISHING → APPROVED) jest dozwolone tylko operacyjnie, gdy transakcja Safe nie została wykonana — po wykonaniu indexer zgłosi anomalię, nie zgadnie.
+
 ## Możliwe P1 — wymaga nowego PRD/ADR i threat modelu
 
 - natywny BTC lub wrapped assets;

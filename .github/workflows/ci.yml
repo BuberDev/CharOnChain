@@ -35,6 +35,29 @@ jobs:
       - run: pnpm test
       - run: pnpm build
 
+  e2e:
+    name: E2E frontendu (Playwright, wersja podglądowa; axe WCAG 2.2 AA)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    needs: typescript
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec playwright install --with-deps chromium
+      - run: pnpm --filter @charonchain/web build
+      - run: pnpm test:e2e
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: e2e-results
+          path: apps/web/e2e/.results
+          retention-days: 7
+
   database:
     name: Database (migracje, rollback, domeny; prawdziwy Postgres)
     runs-on: ubuntu-latest

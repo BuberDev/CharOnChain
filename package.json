@@ -17,13 +17,17 @@
     "test:db": "vitest run --config vitest.db.config.ts",
     "build": "pnpm --filter \"./apps/*\" --filter \"./packages/*\" --filter \"!@charonchain/contracts\" run build",
     "check": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm test && pnpm build",
-    "check:contracts": "pnpm --filter @charonchain/contracts run check"
+    "check:contracts": "pnpm --filter @charonchain/contracts run check",
+    "test:e2e": "pnpm --filter @charonchain/web run test:e2e"
   },
   "devDependencies": {
+    "@axe-core/playwright": "4.14.0",
     "@eslint/js": "10.0.1",
+    "@playwright/test": "1.64.1",
     "@types/node": "22.20.5",
     "eslint": "10.14.0",
     "eslint-config-next": "16.4.3",
+    "playwright": "1.64.1",
     "prettier": "3.9.10",
     "typescript": "6.0.3",
     "typescript-eslint": "8.72.1",

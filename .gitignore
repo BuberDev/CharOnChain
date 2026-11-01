@@ -39,3 +39,6 @@ next-env.d.ts
 # Robocze pliki skilla Taste (nie commitować; dowody trafiają do design-evidence/)
 .taste-skill/
 .vitest/
+
+# Wyniki testów E2E (Playwright)
+apps/web/e2e/.results/

@@ -11,3 +11,6 @@ dist/
 coverage/
 pnpm-lock.yaml
 **/next-env.d.ts
+
+# Wygenerowane artefakty dowodowe (nie edytowane ręcznie)
+design-evidence/**/*.json

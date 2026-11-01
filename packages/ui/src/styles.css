@@ -1,0 +1,489 @@
+/*
+ * CharOnChain — tokeny i kształty kierunku B „Kwit” (docs/DESIGN-DECISIONS.md, DD-001).
+ * Zasady: jeden zestaw tokenów; dwa kroje (Libre Franklin + Source Serif 4); kolory na polach płaskich;
+ * brak gradientów dekoracyjnych, cieni w spoczynku, cienkich linii i obrysów. Krawędzie kwitu to kształty
+ * wypełnione (maska), a nie ramki. Kontrasty policzone skryptem (docs/DESIGN-DECISIONS.md §3).
+ * Mięta #53D5AE NIGDY jako tekst na jasnym tle (1,73:1) — tylko na granacie lub jako wypełnienie przycisku.
+ */
+
+@theme {
+  /* Pola i atrament */
+  --color-navy: #0c1527;
+  --color-navy-2: #14213a;
+  --color-paper: #f6f9fc;
+  --color-field: #e4ebf4;
+  --color-ink: #162033;
+  --color-ink-soft: #3e4b63;
+  --color-muted: #55627a;
+  --color-mist: #a9b8ce;
+  --color-mint: #53d5ae;
+
+  /* Semantyka na jasnym (AA) i na granacie (AAA) */
+  --color-success: #19694a;
+  --color-warning: #7a5200;
+  --color-critical: #a5281f;
+  --color-success-on-navy: #6fe0b5;
+  --color-warning-on-navy: #f2c46b;
+  --color-critical-on-navy: #ff9a8f;
+
+  /* Kroje */
+  --font-display: "Libre Franklin Variable", "Helvetica Neue", Arial, sans-serif;
+  --font-text: "Source Serif 4 Variable", Georgia, "Times New Roman", serif;
+
+  /* Pięć stopni typograficznych (docs/08 §2: skala 4/8; Taste: maks. pięć rozmiarów) */
+  --text-small: clamp(1rem, 0.97rem + 0.1vw, 1.0625rem);
+  --text-body: clamp(1.0625rem, 1rem + 0.25vw, 1.1875rem);
+  --text-lead: clamp(1.25rem, 1.1rem + 0.7vw, 1.625rem);
+  --text-title: clamp(1.75rem, 1.2rem + 1.8vw, 2.5rem);
+  --text-head: clamp(2rem, 1.3rem + 3.2vw, 4rem);
+  --text-display: clamp(2.75rem, 1.4rem + 4.8vw, 5rem);
+
+  /* Siatka: jedna para marginesów (docs/08 §2: skala odstępów 4/8) */
+  --spacing-gutter: clamp(1rem, 0.5rem + 2vw, 2rem);
+  --spacing-section: clamp(4rem, 2rem + 5vw, 7rem);
+
+  --breakpoint-xs: 22.5rem;
+}
+
+:root {
+  --ground: var(--color-navy);
+  --on-ground: var(--color-paper);
+  --focus: var(--color-mint);
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Warstwy: baza i komponenty leżą POD narzędziami Tailwind, więc klasy utility (np. `hidden`, `min-h-*`) je nadpisują. */
+@layer base {
+  html {
+    color-scheme: light;
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    margin: 0;
+    background: var(--color-navy);
+    color: var(--color-paper);
+    font-family: var(--font-text);
+    font-size: var(--text-body);
+    line-height: 1.55;
+    font-variant-numeric: lining-nums;
+    text-rendering: optimizeLegibility;
+  }
+}
+
+@layer components {
+  /* Tła sekcji — fokus dobrany do tła (WCAG 2.2: wskaźnik fokusu min. 3:1) */
+  .ground-navy {
+    --meter-track: var(--color-navy-2);
+    --meter-fill: var(--color-mint);
+    --ground: var(--color-navy);
+    --on-ground: var(--color-paper);
+    --focus: var(--color-mint);
+    background: var(--color-navy);
+    color: var(--color-paper);
+  }
+  .ground-field {
+    --meter-track: var(--color-paper);
+    --meter-fill: var(--color-ink);
+    --ground: var(--color-field);
+    --on-ground: var(--color-ink);
+    --focus: #1b5fd1;
+    background: var(--color-field);
+    color: var(--color-ink);
+  }
+  .ground-paper {
+    --meter-track: var(--color-field);
+    --meter-fill: var(--color-ink);
+    --ground: var(--color-paper);
+    --on-ground: var(--color-ink);
+    --focus: #1b5fd1;
+    background: var(--color-paper);
+    color: var(--color-ink);
+  }
+
+  :where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+    outline: 3px solid var(--focus);
+    outline-offset: 3px;
+  }
+
+  ::selection {
+    background: var(--color-mint);
+    color: var(--color-navy);
+  }
+
+  /* Typografia — nagłówki (display) i tekst (szeryfowy) */
+  .type-display {
+    font-family: var(--font-display);
+    font-weight: 700;
+    letter-spacing: -0.035em;
+    line-height: 0.92;
+    text-transform: uppercase;
+    text-wrap: balance;
+    /* Długie słowo w dużym kroju łamie się zamiast wychodzić poza ramkę (WCAG 1.4.10/1.4.12). `break-word`, nie `anywhere`:
+       nie zmniejsza min-content, więc kolumny siatki nie są ściskane i kwoty nie łamią się w środku („US/DC”). */
+    overflow-wrap: break-word;
+  }
+  .type-head {
+    font-family: var(--font-display);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1;
+    text-wrap: balance;
+    overflow-wrap: break-word;
+  }
+  .type-lead {
+    font-size: var(--text-lead);
+    line-height: 1.4;
+  }
+  .type-small {
+    font-size: var(--text-small);
+    line-height: 1.5;
+  }
+  .tabular {
+    font-variant-numeric: tabular-nums lining-nums;
+  }
+
+  .skip-link {
+    position: absolute;
+    inset-inline-start: 1rem;
+    inset-block-start: -4rem;
+    z-index: 100;
+    padding: 0.75rem 1rem;
+    background: var(--color-mint);
+    color: var(--color-navy);
+    font-family: var(--font-display);
+    font-weight: 600;
+  }
+  .skip-link:focus {
+    inset-block-start: 1rem;
+  }
+
+  /* Przyciski — jeden kształt (prostokąt), jedna wysokość dotykowa >= 44 px */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    min-height: 3rem;
+    padding: 0.75rem 1.5rem;
+    border: 0;
+    border-radius: 0;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: var(--text-small);
+    letter-spacing: -0.005em;
+    line-height: 1.2;
+    text-decoration: none;
+    cursor: pointer;
+    transition:
+      background-color 160ms var(--ease-out),
+      color 160ms var(--ease-out),
+      transform 160ms var(--ease-out);
+  }
+  .btn-mint {
+    background: var(--color-mint);
+    color: var(--color-navy);
+  }
+  .btn-mint:hover {
+    background: var(--color-paper);
+  }
+  .btn-ink {
+    background: var(--color-ink);
+    color: var(--color-paper);
+  }
+  .btn-ink:hover {
+    background: var(--color-navy-2);
+  }
+  .btn-tone {
+    background: var(--color-field);
+    color: var(--color-ink);
+  }
+  .btn-tone:hover {
+    background: var(--color-mist);
+  }
+  .btn:active {
+    transform: translateY(1px);
+  }
+  .btn[aria-disabled="true"],
+  .btn:disabled {
+    cursor: not-allowed;
+    opacity: 1;
+    background: var(--color-field);
+    color: var(--color-muted);
+  }
+  .btn-block {
+    display: flex;
+    width: 100%;
+    min-height: 3.5rem;
+  }
+
+  .link {
+    color: inherit;
+    text-decoration: underline;
+    text-decoration-thickness: 0.08em;
+    text-underline-offset: 0.2em;
+  }
+  .link:hover {
+    text-decoration-thickness: 0.14em;
+  }
+  .link-plain {
+    color: inherit;
+    text-decoration: none;
+  }
+  .link-plain:hover {
+    text-decoration: underline;
+    text-underline-offset: 0.25em;
+  }
+
+  /* ===== Papeteria: kwit, odcinek, slip, arkusz ===== */
+
+  .paper {
+    --meter-track: var(--color-field);
+    --meter-fill: var(--color-ink);
+    background: var(--color-paper);
+    color: var(--color-ink);
+    --focus: #1b5fd1;
+  }
+
+  /* Kwit: pozycje z kropkową prowadnicą (kropki >= 4 px, nie linia) */
+  .cc-rows {
+    margin: 0;
+    padding: 0;
+  }
+  .cc-row {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    padding-block: 0.4rem;
+    font-variant-numeric: tabular-nums lining-nums;
+  }
+  .cc-row > dt {
+    flex: 0 1 auto;
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+  .cc-row::after {
+    content: "";
+    order: 1;
+    flex: 1 1 1rem;
+    min-width: 1rem;
+    align-self: flex-end;
+    margin-block-end: 0.4em;
+    border-block-end: 4px dotted var(--color-ink-soft);
+  }
+  .cc-row > dd {
+    order: 2;
+    min-width: 0;
+    margin: 0;
+    text-align: end;
+    font-weight: 600;
+    overflow-wrap: anywhere;
+  }
+  /* Wąskie ekrany: etykieta i wartość obok siebie bez kropkowej prowadnicy; długie wartości zawijają się w swoim polu */
+  @media (max-width: 30rem) {
+    .cc-row {
+      justify-content: space-between;
+      gap: 1rem;
+    }
+    .cc-row::after {
+      display: none;
+    }
+    .cc-row > dt {
+      flex: 1 1 40%;
+    }
+    .cc-row > dd {
+      flex: 1 1 50%;
+      min-width: 0;
+    }
+  }
+  .cc-row.cc-row--plain::after {
+    display: none;
+  }
+  .cc-row.cc-row--plain {
+    justify-content: space-between;
+    gap: 1.5rem;
+  }
+  /* Etykieta bierze resztę miejsca i się zawija; wartość trzyma swoją szerokość (do 70%) i nigdy nie wychodzi poza kartę */
+  .cc-row.cc-row--plain > :first-child {
+    flex: 1 1 0%;
+    min-width: 0;
+  }
+  .cc-row.cc-row--plain > :last-child {
+    flex: 0 1 auto;
+    order: 2;
+    min-width: 0;
+    max-width: 70%;
+    text-align: end;
+    overflow-wrap: anywhere;
+  }
+
+  /* „Drukowanie” kwitu: pozycje pojawiają się kolejno raz, po odsłonięciu karty (sygnatura ruchu) */
+  .cc-print > .cc-row,
+  .cc-print + .cc-total {
+    animation: rise-in 520ms var(--ease-out) both;
+  }
+  .cc-print > .cc-row:nth-child(1) {
+    animation-delay: 380ms;
+  }
+  .cc-print > .cc-row:nth-child(2) {
+    animation-delay: 470ms;
+  }
+  .cc-print > .cc-row:nth-child(3) {
+    animation-delay: 560ms;
+  }
+  .cc-print > .cc-row:nth-child(4) {
+    animation-delay: 650ms;
+  }
+  .cc-print > .cc-row:nth-child(5) {
+    animation-delay: 740ms;
+  }
+  .cc-print + .cc-total {
+    animation-delay: 850ms;
+  }
+  .cc-total {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    min-height: 2.75rem;
+    padding-inline: 1rem;
+    margin-top: 1rem;
+    background: var(--color-ink);
+    color: var(--color-paper);
+    font-family: var(--font-display);
+    font-weight: 600;
+  }
+  /* Etykieta i kwota mogą się zawijać (zoom, powiększone odstępy tekstu) zamiast wychodzić poza kartę */
+  .cc-total > :first-child {
+    flex: 1 1 0%;
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+  /* Kwota nie jest ściskana poniżej najdłuższego słowa (break-word nie zmniejsza min-content): „USDC” się nie łamie */
+  .cc-total > :last-child {
+    flex: 0 1 auto;
+    text-align: end;
+    overflow-wrap: break-word;
+  }
+
+  /* Zygzakowata dolna krawędź slipu (maska = wypełniony kształt) */
+  .edge-zigzag-bottom {
+    --z: 14px;
+    /* prettier-ignore */
+    -webkit-mask: /* taste-skill-ignore: maska kształtu, nie wypełnienie */ linear-gradient(#000 0 0) top / 100% calc(100% - var(--z) + 1px) no-repeat, conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) bottom / calc(var(--z) * 2) var(--z) repeat-x;
+    /* prettier-ignore */
+    mask: /* taste-skill-ignore: maska kształtu, nie wypełnienie */ linear-gradient(#000 0 0) top / 100% calc(100% - var(--z) + 1px) no-repeat, conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) bottom / calc(var(--z) * 2) var(--z) repeat-x;
+  }
+
+  /* Festony (półkola) u góry i/lub u dołu arkusza */
+  .edge-scallop-top {
+    --r: 14px;
+    /* prettier-ignore */
+    -webkit-mask: /* taste-skill-ignore: maska kształtu, nie wypełnienie */ radial-gradient(circle var(--r) at 50% 0, #0000 97%, #000) top / calc(var(--r) * 2) var(--r) repeat-x, linear-gradient(#000 0 0) bottom / 100% calc(100% - var(--r) + 1px) no-repeat;
+    /* prettier-ignore */
+    mask: /* taste-skill-ignore: maska kształtu, nie wypełnienie */ radial-gradient(circle var(--r) at 50% 0, #0000 97%, #000) top / calc(var(--r) * 2) var(--r) repeat-x, linear-gradient(#000 0 0) bottom / 100% calc(100% - var(--r) + 1px) no-repeat;
+  }
+  .edge-scallop-both {
+    --r: 14px;
+    /* prettier-ignore */
+    -webkit-mask: /* taste-skill-ignore: maska kształtu, nie wypełnienie */ radial-gradient(circle var(--r) at 50% 0, #0000 97%, #000) top / calc(var(--r) * 2) var(--r) repeat-x, radial-gradient(circle var(--r) at 50% 100%, #0000 97%, #000) bottom / calc(var(--r) * 2) var(--r) repeat-x, linear-gradient(#000 0 0) center / 100% calc(100% - var(--r) * 2 + 2px) no-repeat;
+    /* prettier-ignore */
+    mask: /* taste-skill-ignore: maska kształtu, nie wypełnienie */ radial-gradient(circle var(--r) at 50% 0, #0000 97%, #000) top / calc(var(--r) * 2) var(--r) repeat-x, radial-gradient(circle var(--r) at 50% 100%, #0000 97%, #000) bottom / calc(var(--r) * 2) var(--r) repeat-x, linear-gradient(#000 0 0) center / 100% calc(100% - var(--r) * 2 + 2px) no-repeat;
+  }
+
+  /* Odcinek z wycięciami po bokach (odznaka soulbound) */
+  .edge-notch-sides {
+    --n: 14px;
+    /* prettier-ignore */
+    -webkit-mask: /* taste-skill-ignore: maska kształtu, nie wypełnienie */ radial-gradient(circle var(--n) at 0 50%, #0000 97%, #000) left / 51% 100% no-repeat, radial-gradient(circle var(--n) at 100% 50%, #0000 97%, #000) right / 51% 100% no-repeat;
+    /* prettier-ignore */
+    mask: /* taste-skill-ignore: maska kształtu, nie wypełnienie */ radial-gradient(circle var(--n) at 0 50%, #0000 97%, #000) left / 51% 100% no-repeat, radial-gradient(circle var(--n) at 100% 50%, #0000 97%, #000) right / 51% 100% no-repeat;
+  }
+
+  /* Perforacja: kropki 4 px */
+  .perforation {
+    border-block-start: 4px dotted var(--color-mist);
+  }
+
+  /* Pole postępu: wypełniony kształt, nie linia */
+  .fill-meter {
+    display: block;
+    inline-size: 100%;
+    block-size: 1.25rem;
+    background: var(--meter-track, var(--color-field));
+  }
+  .fill-meter > span {
+    display: block;
+    block-size: 100%;
+    background: var(--meter-fill, var(--color-ink));
+  }
+
+  /* Ruch: tylko opacity/transform, raz, przy wejściu (docs/08 §2, prefers-reduced-motion) */
+  @keyframes rise-in {
+    from {
+      opacity: 0;
+      transform: translateY(18px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  @keyframes crossfade {
+    0%,
+    44% {
+      opacity: 1;
+    }
+    50%,
+    94% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+  /*
+   * Odsłanianie: ukrywamy WYŁĄCZNIE to, co leży poniżej zagięcia, i robi to JS po hydracji
+   * (klasa .reveal-pending). Treść nad zagięciem i treść bez JS jest zawsze widoczna (brak migotania, lepsze LCP).
+   */
+  .reveal-pending {
+    opacity: 0;
+  }
+  .is-visible[data-reveal] {
+    animation: rise-in 700ms var(--ease-out) both;
+    animation-delay: calc(var(--i, 0) * 70ms);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+    .reveal-pending {
+      opacity: 1;
+    }
+    .cc-print > .cc-row,
+    .cc-print + .cc-total {
+      animation: none !important;
+    }
+  }
+
+  .sr-only {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+  }
+}
